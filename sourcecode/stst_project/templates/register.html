@@ -7,10 +7,14 @@
 
 {% block main_content %}
   <form action="/register">
-    <input type="text" name="username" value="" placeholder="Username" required>
+    <input type="text" name="username" value=
+    "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
+    placeholder="Username" required>
     <input type="password" name="password" value="" placeholder="Password" required>
     <input type="password" name="password_conf" value="" placeholder="Confirm password" required>
-    <input type="email" name="email" value="" placeholder="E-mail address" required>
+    <input type="email" name="email" value=
+    "{% if prev_form: %}{{prev_form['email']}}{% endif %}"
+    placeholder="E-mail address" required>
     <input type="submit">
   </form>
 {% endblock %}

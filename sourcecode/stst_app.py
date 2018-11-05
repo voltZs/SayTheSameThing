@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, abort, flash
+from flask import Flask, request, render_template, redirect, abort, flash, session
 from stst_project import app, db
 from stst_project.models import User
 
@@ -20,13 +20,16 @@ def register():
         try:
             check_username_existing(username)
             check_email_existing(email)
-        except Exception as exc:
-            print(exc.args[0])
+        except Exception as msg:
+            session['prev_form'] = {'username' : username, 'email': email}
+            print(session['prev_form'])
+            flash(msg.args[0])
+            return redirect('/register')
         user = User(username, email, password)
         db.session.add(user)
         db.session.commit()
         return redirect('/login')
-    return render_template('register.html')
+    return render_template('register.html', prev_form = session['prev_form'])
 
 @app.route('/login')
 def login():

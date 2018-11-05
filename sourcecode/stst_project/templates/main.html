@@ -50,6 +50,16 @@
     <div class="mainContainer">
       <div class="topSpace">
       </div>
+      {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+          <div class=flash_msg>
+          {% for message in msgs %}
+            {{ message }} <br>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
       {% block main_content %}
       {% endblock %}
     </div>
