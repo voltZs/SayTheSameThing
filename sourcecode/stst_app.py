@@ -29,6 +29,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         return redirect('/login')
+    if not session.get('prev_form'):
+        session['prev_form'] = {}
     return render_template('register.html', prev_form = session['prev_form'])
 
 @app.route('/login')
