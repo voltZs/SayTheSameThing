@@ -1,0 +1,160 @@
+html{
+  background-color: rgb(255, 128, 17);
+}
+
+body{
+  font-family: 'Nunito', sans-serif;
+}
+
+.navigbar{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: rgb(255, 155, 68);
+}
+
+.navigbarItem{
+  font-size: 19px;
+  font-weight: bold;
+  display: inline-block;
+  padding: 9px 0;
+}
+
+
+.topSpace{
+  width: 100%;
+  height: 60px;
+}
+
+.mainContainer{
+  /* get rid of this once theres content */
+  height: 500px;
+  border: white solid 1px;
+
+  width: 60%;
+  min-width: 670px;
+  margin: 0 auto;
+}
+
+.pageContainer{
+  border: white solid 1px;
+  box-sizing: border-box;
+  display: inline-block;
+  float: left;
+  width: 70%;
+}
+
+.rightContainer{
+  box-sizing: border-box;
+  display: inline-block;
+  float: right;
+  width: 30%;
+}
+
+.rightContBubble{
+  position: relative;
+  font-size: 19px;
+  font-weight: bold;
+  width: 70%;
+  margin: 8px auto;
+  padding: 5px;
+  text-align: center;
+  border-radius: 10px;
+  background-color: rgb(255, 155, 68);
+}
+
+.hoverableOrange:hover{
+  background-color: rgb(255, 243, 232);
+  cursor: pointer;
+}
+
+.bubblecomp1{
+  z-index: -1;
+  position: absolute;
+  right: -10px;
+  bottom: 0;
+  background-color: rgb(255, 155, 68);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+.bubblecomp2{
+  z-index: -1;
+  position: absolute;
+  right: -20px;
+  bottom: 0;
+  background-color: rgb(255, 128, 17);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+.bubblecomp3{
+  z-index: -1;
+  position: absolute;
+  right: -20px;
+  bottom: 10px;
+  background-color: rgb(255, 128, 17);
+  width: 20px;
+  height: 20px;
+}
+
+#userInfoCont{
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#userNameHolder{
+  font-size: 19px;
+  font-weight: bold;
+}
+
+#userInfoHolder{
+  font-size: 15px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+#levelHolder{
+  display: inline-block;
+}
+
+#levelBar{
+  display: inline-block;
+  position: relative;
+  width: 50%;
+  background-color: rgb(255, 155, 68);
+  height: 9px;
+  border-radius: 4px;
+}
+
+#levelBarFill{
+  position: absolute;
+  width: 67%;
+  background-color: rgb(255, 243, 232);
+  height: 9px;
+  border-radius: 4px;
+}
+
+
+
+a{
+  padding: 0;
+  text-decoration: none;
+  color: black;
+}
+
+.lightOrange{
+  background-color: rgb(255, 243, 232);
+}
+
+/* pale orange
+rgb(255, 243, 232)
+
+regular orange
+rgb(255, 155, 68)
+
+dark orange
+rgb(255, 128, 17) */
