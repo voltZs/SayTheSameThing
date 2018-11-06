@@ -42,16 +42,39 @@ body{
 }
 
 .mainContainer{
-  height: 500px;
+  height: 100vh;
   position: relative;
   width: 60%;
+  min-height: 360px;
   min-width: 670px;
   margin: 0 auto;
 }
 
+.midScreenForm{
+  width:50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 400px;
+  min-height: 150px;
+  padding: 15px;
+  border-radius: 20px;
+  background-color: rgb(255, 155, 68);
+}
+
 .flash_msg{
-  margin: 0 auto;
-  display: inline;
+  z-index: 2;
+  position: absolute;
+  top:20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  height: 24px;
+  padding: 5px 8px;
+  border-radius: 5px;
   background-color: rgb(255, 243, 232);
 }
 
@@ -201,6 +224,36 @@ a{
   text-decoration: none;
   color: black;
 }
+
+form{
+  width:100%;
+  display: relative;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+.inputDiv{
+  width: 100%;
+  text-align: center;
+  margin: 18px 0;
+}
+input{
+  text-align: center;
+  font-size: 17px;
+  height: 24px;
+  margin: 0 3px;
+  border-radius: 5px;
+  border-style: none;
+  outline: none;
+  background-color: rgb(255, 243, 232);
+}
+input[type="submit"]{
+  font-weight: bold;
+}
+input[type="submit"]:hover{
+  cursor: pointer;
+}
+
 
 .whiteOrange{
   background-color: rgb(255, 243, 232);

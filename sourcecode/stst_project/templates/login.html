@@ -1,16 +1,30 @@
 {% extends "main.html" %}
 
 {% block meta_title %}
-  Register - Say the Same Thing
+  Log in - Say the Same Thing
 {% endblock %}
 
 
 {% block main_content %}
-  <form action="/login">
-    <input type="text" name="username" value=
-    "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
-    placeholder="Username" required>
-    <input type="password" name="password" value="" placeholder="Password" required>
-    <input type="submit" value="Log In">
-  </form>
+  <div class="topSpace"></div>
+  <div class="midScreenForm formBubble">
+    <div class="bubblecomp1left"></div>
+    <div class="bubblecomp2left"></div>
+    <div class="bubblecomp3left"></div>
+    <form action="/login">
+      <div class="inputDiv">
+        Log in to continue
+      </div>
+      <div class="inputDiv">
+        <input type="text" name="username" value=
+        "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
+        placeholder="Username" required>
+        <input type="password" name="password" value="" placeholder="Password" required>
+      </div>
+      <div class="inputDiv">
+        <input type="submit" value="Log In">
+      </div>
+
+    </form>
+  </div>
 {% endblock %}

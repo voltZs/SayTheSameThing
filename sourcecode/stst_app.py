@@ -50,8 +50,15 @@ def login():
         # only login if username and password are not None
         if not username == None and not password == None:
             user = User.query.filter_by(username=username).first()
-            if user.check_password(password) and not user == None:
-                login_user(user)
+            if not user == None:
+                if user.check_password(password):
+                    login_user(user)
+                else:
+                    flash('The password you entered was incorrect')
+                    return redirect(url_for('login'))
+            else:
+                flash('This username does not exist')
+                return redirect(url_for('login'))
 
         return redirect(url_for('welcome'))
     return render_template('login.html')

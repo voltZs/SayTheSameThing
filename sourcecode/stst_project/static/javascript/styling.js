@@ -3,7 +3,6 @@ var avatarBubble = document.getElementById("avatarBub");
 var userInfoCont = document.getElementById("userInfoCont");
 var userSideBar = document.getElementById("userSideBar");
 
-
 bubbles.forEach(function(elem){
   if(elem.id != "avatarBub"){
     elem.addEventListener("mouseenter", function(){
@@ -15,7 +14,6 @@ bubbles.forEach(function(elem){
     });
   }
 });
-
 
 userSideBar.addEventListener("mouseenter", function(){
   avatarBubble.classList.add("whiteOrange");

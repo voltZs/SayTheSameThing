@@ -6,15 +6,33 @@
 
 
 {% block main_content %}
-  <form action="/register">
-    <input type="text" name="username" value=
-    "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
-    placeholder="Username" required>
-    <input type="password" name="password" value="" placeholder="Password" required>
-    <input type="password" name="password_conf" value="" placeholder="Confirm password" required>
-    <input type="email" name="email" value=
-    "{% if prev_form: %}{{prev_form['email']}}{% endif %}"
-    placeholder="E-mail address" required>
-    <input type="submit">
-  </form>
+  <div class="midScreenForm formBubble">
+    <div class="bubblecomp1left"></div>
+    <div class="bubblecomp2left"></div>
+    <div class="bubblecomp3left"></div>
+    <form action="/register">
+      <div class="inputDiv">
+        Sign up with an account
+      </div>
+      <div class="inputDiv">
+        <input type="text" name="username" value=
+        "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
+        placeholder="Username" required>
+      </div>
+      <div class="inputDiv">
+        <input type="password" name="password" value="" placeholder="Password" required>
+      </div>
+      <div class="inputDiv">
+        <input type="password" name="password_conf" value="" placeholder="Confirm password" required>
+      </div>
+      <div class="inputDiv">
+        <input type="email" name="email" value=
+        "{% if prev_form: %}{{prev_form['email']}}{% endif %}"
+        placeholder="E-mail address" required>
+      </div>
+      <div class="inputDiv">
+        <input type="submit">
+      </div>
+    </form>
+  </div>
 {% endblock %}
