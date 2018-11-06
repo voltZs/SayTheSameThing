@@ -6,7 +6,7 @@
 
 
 {% block main_content %}
-  <form action="/register">
+  <form action="/login">
     <input type="text" name="username" value=
     "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
     placeholder="Username" required>

@@ -25,8 +25,9 @@ def load_user(username):
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
-    username = db.Column(db.Text, primary_key=True)
-    password_hash = db.Column(db.String(128))
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.Text, unique=True)
+    password_hashed = db.Column(db.String(128))
     email = db.Column(db.Text)
     xp = db.Column(db.Integer)
     # games = db.relationship('Game', backref='user', lazy='dynamic')
@@ -37,10 +38,11 @@ class User(db.Model, UserMixin):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password = generate_password_hash(password)
+        self.password_hashed = generate_password_hash(password)
+        self.xp = 0
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hashed, password)
 
     def __repr__(self):
         return "User: " + self.username

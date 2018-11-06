@@ -1,12 +1,29 @@
-bubbles = document.querySelectorAll(".rightContBubble")
+var bubbles = document.querySelectorAll(".rightContBubble");
+var avatarBubble = document.getElementById("avatarBub");
+var userInfoCont = document.getElementById("userInfoCont");
+var userSideBar = document.getElementById("userSideBar");
 
 
 bubbles.forEach(function(elem){
-  elem.addEventListener("mouseenter", function(){
-    elem.getElementsByClassName('bubblecomp1')[0].classList.add("lightOrange");
-  });
+  if(elem.id != "avatarBub"){
+    elem.addEventListener("mouseenter", function(){
+      elem.getElementsByClassName('bubblecomp1')[0].classList.add("whiteOrange");
+    });
 
-  elem.addEventListener("mouseleave", function(){
-    elem.getElementsByClassName('bubblecomp1')[0].classList.remove("lightOrange");
-  });
-})
+    elem.addEventListener("mouseleave", function(){
+      elem.getElementsByClassName('bubblecomp1')[0].classList.remove("whiteOrange");
+    });
+  }
+});
+
+
+userSideBar.addEventListener("mouseenter", function(){
+  avatarBubble.classList.add("whiteOrange");
+  bubbles[0].getElementsByClassName('bubblecomp1')[0].classList.add("whiteOrange");
+  userInfoCont.classList.add("whiteOrangeText");
+});
+userSideBar.addEventListener("mouseleave", function(){
+  avatarBubble.classList.remove("whiteOrange");
+  bubbles[0].getElementsByClassName('bubblecomp1')[0].classList.remove("whiteOrange");
+  userInfoCont.classList.remove("whiteOrangeText");
+});

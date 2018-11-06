@@ -1,55 +1,75 @@
 {% extends "main.html" %}
 
 {% block main_content %}
-  <div class="pageContainer">
+  <div class="pageContainerBubble">
+    <div class="bubblecomp1left"></div>
+    <div class="bubblecomp2left"></div>
+    <div class="bubblecomp3left"></div>
     {% block page_content %}
     {% endblock %}
   </div>
+
+
+
+
   <div class="rightContainer">
-    <div class="rightContBubble hoverableOrange">
-      <div class="bubblecomp1"></div>
-      <div class="bubblecomp2"></div>
-      <div class="bubblecomp3"></div>
-      <img src="https://www.freeiconspng.com/uploads/profile-picture-icon-png-people-person-profile--4.png" alt="" width="120" height="120">
-    </div>
-
-    <div id="userInfoCont">
-      <div id="userNameHolder">
-        volt_Zs
-      </div>
-      <div id="userInfoHolder">
-        <div id="levelHolder">
-          lvl 8
+    <a href="/user_settings" id="user_sidebar_anchor">
+      <div id="userSideBar">
+        <div id="avatarBub" class="rightContBubble hoverableOrange" >
+          <div class="bubblecomp1"></div>
+          <div class="bubblecomp2"></div>
+          <div class="bubblecomp3"></div>
+          <img src="https://www.freeiconspng.com/uploads/profile-picture-icon-png-people-person-profile--4.png" alt="" width="120" height="120">
         </div>
-        <div id="levelBar">
-          <div id="levelBarFill"></div>
+
+        <div id="userInfoCont">
+          <div id="userNameHolder">
+            {{current_user.username}}
+          </div>
+          <div id="userInfoHolder">
+            <div id="levelHolder">
+              lvl {{current_user.xp}}
+            </div>
+            <div id="levelBar">
+              <div id="levelBarFill"></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </a>
 
-    <div class="rightContBubble hoverableOrange">
-      <div class="bubblecomp1"></div>
-      <div class="bubblecomp2"></div>
-      <div class="bubblecomp3"></div>
-      Play!
-    </div>
-    <div class="rightContBubble hoverableOrange">
-      <div class="bubblecomp1"></div>
-      <div class="bubblecomp2"></div>
-      <div class="bubblecomp3"></div>
-      My Games
-    </div>
-    <div class="rightContBubble hoverableOrange">
-      <div class="bubblecomp1"></div>
-      <div class="bubblecomp2"></div>
-      <div class="bubblecomp3"></div>
-      My Buddies
-    </div>
-    <div class="rightContBubble hoverableOrange">
-      <div class="bubblecomp1"></div>
-      <div class="bubblecomp2"></div>
-      <div class="bubblecomp3"></div>
-      Find User
-    </div>
+    <a href="/play_random">
+      <div class="rightContBubble hoverableOrange">
+        <div class="bubblecomp1"></div>
+        <div class="bubblecomp2"></div>
+        <div class="bubblecomp3"></div>
+        Play!
+      </div>
+    </a>
+
+    <a href="/games">
+      <div class="rightContBubble hoverableOrange">
+        <div class="bubblecomp1"></div>
+        <div class="bubblecomp2"></div>
+        <div class="bubblecomp3"></div>
+        My Games
+      </div>
+    </a>
+    <a href="/buddies">
+      <div class="rightContBubble hoverableOrange">
+        <div class="bubblecomp1"></div>
+        <div class="bubblecomp2"></div>
+        <div class="bubblecomp3"></div>
+        My Buddies
+      </div>
+    </a>
+    <a href="/users">
+      <div class="rightContBubble hoverableOrange">
+        <div class="bubblecomp1"></div>
+        <div class="bubblecomp2"></div>
+        <div class="bubblecomp3"></div>
+        Find User
+      </div>
+    </a>
   </div>
 {% endblock %}

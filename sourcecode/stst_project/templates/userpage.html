@@ -1,0 +1,23 @@
+{% extends "withsidebar.html" %}
+
+{% block meta_title %}
+  {{user.username}} - Say The Same Thing
+{% endblock %}
+
+{% block in_head %}
+  <!-- IF THE USER IS ME REDIRECT TO MY PROFILE -->
+  {% if user == current_user %}
+    <script>
+      window.location.href = "{{url_for('user_me')}}"
+    </script>
+  {% endif %}
+{% endblock %}
+
+{% block page_content %}
+  <div>{{user.username}}</div>
+  {{user.avatar}}
+  {{user.xp}}
+
+
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}
