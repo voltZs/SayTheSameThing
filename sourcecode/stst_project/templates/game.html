@@ -1,0 +1,74 @@
+{% extends "main.html" %}
+
+{% block meta_title %}
+Play - Say The Same Thing
+{% endblock %}
+
+{% block main_content %}
+<div class="containerBubble gameContainer">
+  <div class="bubblecomp1leftlarge"></div>
+  <div class="bubblecomp2leftlarge"></div>
+  <div class="bubblecomp3leftlarge"></div>
+
+  <div class="stst_container">
+    <div class="stst_left">
+      <div class="turnBubble">
+        <div class="bubblecomp1left whitebubblecomp1"></div>
+        <div class="bubblecomp2left whitebubblecomp2"></div>
+        <div class="bubblecomp3left whitebubblecomp3"></div>
+      </div>
+      {% for turn in other_user_turns %}
+        {{turn.content}} - {{turn.timestamp}} <br>
+      {% endfor %}
+    </div>
+    <div class="stst_right">
+      {% for turn in curr_user_turns %}
+        {{turn.content}} - {{turn.timestamp}} <br>
+      {% endfor %}
+    </div>
+    <div class="stst_common">
+
+    </div>
+  </div>
+
+  <div class="vsContainer">
+    <a href="/user/{{other_user.username}}">
+      <div class="miniUserLeft" id="otherPlayerMini">
+        <img class="miniAvatar"  src="{{url_for('static', filename='avatars/'+ other_user.avatar|string +'.png')}}" alt="">
+        <div class="miniUserInfo">
+          <div class="miniUsername">
+            {{other_user.username}}
+          </div>
+          <div class="miniLevel">
+            lvl {{other_user_leveling.level}}
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <div class="answerDiv">
+      <form action="/submit_answer">
+        <input type="text" name="answer" value="" placeholder="Say The Same Thing" class="answerBubble">
+        <input type="hidden" name="game_id" value="{{game_id}}">
+        <input type="hidden" name="user_id" value="{{current_user.id}}">
+      </form>
+
+    </div>
+
+    <a href="/games">
+      <div class="miniUserRight" id="mePlayerMini">
+        <img class="miniAvatar"  src="{{url_for('static', filename='avatars/'+ current_user.avatar|string +'.png')}}" alt="">
+        <div class="miniUserInfo">
+          <div class="miniUsername">
+            {{current_user.username}}
+          </div>
+          <div class="miniLevel">
+            lvl {{curr_user_leveling.level}}
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

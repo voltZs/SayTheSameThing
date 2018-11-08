@@ -10,8 +10,8 @@ db.create_all()
 # db.session.add(user2)
 # db.session.commit()
 #
-# retrieved_user1 = User.query.filter_by(username='tralala').first()
-# retrieved_user2 = User.query.filter_by(username='kokoto').first()
+# retrieved_user1 = User.query.filter_by(username='matt.d').first()
+# retrieved_user2 = User.query.filter_by(username='honey.bunny').first()
 # game = Game()
 # game.users.append(retrieved_user1)
 # game.users.append(retrieved_user2)
@@ -33,16 +33,16 @@ db.create_all()
 # db.session.add(game)
 # db.session.add_all([retrieved_user1,retrieved_user2])
 # db.session.commit()
+
+# tralala = User.query.filter_by(username='tralala').first()
+# kokoto = User.query.filter_by(username='kokoto').first()
 #
-tralala = User.query.filter_by(username='tralala').first()
-kokoto = User.query.filter_by(username='kokoto').first()
-
-kokoto.buddies.append(tralala)
-db.session.add(kokoto)
-db.session.commit()
-
-print(User.query.filter_by(username='tralala').first().buddies)
-print(User.query.filter_by(username='kokoto').first().buddies)
+# kokoto.buddies.append(tralala)
+# db.session.add(kokoto)
+# db.session.commit()
+#
+# print(User.query.filter_by(username='tralala').first().buddies)
+# print(User.query.filter_by(username='kokoto').first().buddies)
 
 # User.query.filter_by(username='tralala').first().buddies.append(kokoto)
 # db.session.add(tralala)
