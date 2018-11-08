@@ -23,7 +23,9 @@ class User(db.Model, UserMixin):
     username = db.Column(db.Text, unique=True, nullable = False)
     password_hashed = db.Column(db.String(128), nullable = False)
     email = db.Column(db.Text, nullable = False)
+    joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     xp = db.Column(db.Integer, nullable = False)
+    avatar = db.Column(db.Integer, nullable = False, default=1)
     games = db.relationship('Game', secondary='games', lazy='subquery', backref=db.backref('users', lazy=True))
     turns = db.relationship('Turn', backref='user', lazy=True)
     # game_requests =
@@ -44,8 +46,8 @@ class User(db.Model, UserMixin):
 
 
 class Game(db.Model):
-
     id= db.Column(db.Integer, primary_key=True)
+    won = db.Column(db.Boolean, nullable=False, default=False)
     turns = db.relationship('Turn', backref='game', lazy=True)
 
     def __repr__(self):

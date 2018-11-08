@@ -175,32 +175,32 @@ body{
   height: 40px;
 }
 
-#userInfoCont{
+.userInfoCont{
   width: 90%;
   margin: 0 auto 25px auto;
   text-align: center;
 }
 
-#userInfoCont:hover{
+.userInfoCont:hover{
   color: rgb(255, 243, 232)
 }
 
-#userNameHolder{
+.userNameHolder{
   font-size: 19px;
   font-weight: bold;
 }
 
-#userInfoHolder{
+.userInfoHolder{
   font-size: 15px;
   font-weight: bold;
   vertical-align: middle;
 }
 
-#levelHolder{
+.levelHolder{
   display: inline-block;
 }
 
-#levelBar{
+.levelBar{
   display: inline-block;
   position: relative;
   width: 50%;
@@ -209,9 +209,8 @@ body{
   border-radius: 4px;
 }
 
-#levelBarFill{
+.levelBarFill{
   position: absolute;
-  width: 67%;
   background-color: rgb(255, 243, 232);
   height: 9px;
   border-radius: 4px;
@@ -241,6 +240,7 @@ input{
   text-align: center;
   font-size: 17px;
   height: 24px;
+  width: 80%;
   margin: 0 3px;
   border-radius: 5px;
   border-style: none;
@@ -249,9 +249,11 @@ input{
 }
 input[type="submit"]{
   font-weight: bold;
+  width: 40%;
 }
 input[type="submit"]:hover{
   cursor: pointer;
+
 }
 
 

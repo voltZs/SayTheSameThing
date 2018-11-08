@@ -1,6 +1,6 @@
 var bubbles = document.querySelectorAll(".rightContBubble");
 var avatarBubble = document.getElementById("avatarBub");
-var userInfoCont = document.getElementById("userInfoCont");
+var userInfoCont = document.getElementById("currentUserInfo");
 var userSideBar = document.getElementById("userSideBar");
 
 bubbles.forEach(function(elem){

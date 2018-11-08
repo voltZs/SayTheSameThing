@@ -6,5 +6,20 @@
 
 
 {% block page_content %}
+  <h3>Search for user:</h3>
+  <form action="/users">
+    <input type="text" name="searchWord" value="" placeholder="Username or e-mail address">
+  </form>
+  {% if search_results %}
+  <h3>Results:</h3>
+    {% for user in search_results %}
+      {{user.username}} {{user.email}} <br>
+    {% endfor %}
+  {% endif %}
+
+  <h3>New users:</h3>
+  {% for user in recent_users %}
+    {{user.username}} {{user.email}} <br>
+  {% endfor %}
   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock %}
