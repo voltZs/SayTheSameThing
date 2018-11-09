@@ -5,33 +5,58 @@ Play - Say The Same Thing
 {% endblock %}
 
 {% block main_content %}
-<div class="containerBubble gameContainer">
-  <div class="bubblecomp1leftlarge"></div>
-  <div class="bubblecomp2leftlarge"></div>
-  <div class="bubblecomp3leftlarge"></div>
+<div class="containerBubble gameContainer compWhite">
+  <div class="bubblecomp1leftlarge compWhite"></div>
+  <div class="bubblecomp2leftlarge compDark"></div>
+  <div class="bubblecomp3leftlarge compDark"></div>
+
+  <h1 class="textAlignMiddle">Playing with {{other_user.username}}</h1>
 
   <div class="stst_container">
-    <div class="stst_left">
-      <div class="turnBubble">
-        <div class="bubblecomp1left whitebubblecomp1"></div>
-        <div class="bubblecomp2left whitebubblecomp2"></div>
-        <div class="bubblecomp3left whitebubblecomp3"></div>
+    <h2 class="textAlignMiddle">It's easy guys. Just say the same thing!</h2>
+    <a href="/"><h4 class="textAlignMiddle">Read game rules</h4></a>
+    {% for x in range(10) %}
+      <div class=stst_round>
+        <div class="stst_left">
+            <div class="turnBubble compDark">
+              <div class="bubblecomp1left compDark"></div>
+              <div class="bubblecomp2left compWhite"></div>
+              <div class="bubblecomp3left compWhite"></div>
+
+              {% if other_user_turns|length >= x+1 %}
+                {{other_user_turns[x].content}}
+              {% endif %}
+            </div>
+            <div class="turnTimestampLeft">
+              {% if other_user_turns|length >= x+1 %}
+                {{other_user_turns[x].timestamp}}
+              {% endif %}
+            </div>
+        </div>
+        <div class="stst_right">
+          <div class="turnBubble compDark">
+            <div class="bubblecomp1right compDark"></div>
+            <div class="bubblecomp2right compWhite"></div>
+            <div class="bubblecomp3right compWhite"></div>
+            {% if curr_user_turns|length >= x+1 %}
+              {{curr_user_turns[x].content}}
+            {% endif %}
+          </div>
+          <div class="turnTimestampRight">
+            {% if curr_user_turns|length >= x+1 %}
+              {{curr_user_turns[x].timestamp}}
+            {% endif %}
+          </div>
+        </div>
       </div>
-      {% for turn in other_user_turns %}
-        {{turn.content}} - {{turn.timestamp}} <br>
-      {% endfor %}
-    </div>
-    <div class="stst_right">
-      {% for turn in curr_user_turns %}
-        {{turn.content}} - {{turn.timestamp}} <br>
-      {% endfor %}
-    </div>
+    {% endfor %}
+
     <div class="stst_common">
 
     </div>
   </div>
 
-  <div class="vsContainer">
+  <div class="vsContainer compDark">
     <a href="/user/{{other_user.username}}">
       <div class="miniUserLeft" id="otherPlayerMini">
         <img class="miniAvatar"  src="{{url_for('static', filename='avatars/'+ other_user.avatar|string +'.png')}}" alt="">
@@ -71,4 +96,6 @@ Play - Say The Same Thing
   </div>
 
 </div>
+
+<script src="{{url_for('static', filename='javascript/game.js')}}"></script>
 {% endblock %}

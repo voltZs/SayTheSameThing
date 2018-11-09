@@ -237,8 +237,9 @@ def calculate_xp_to_level(xp):
     return float(400/700)
 
 def get_turns(game, user):
-    turns = []
-    for turn in game.turns:
+    ordered_turns = get_ordered_turns(game.turns)
+    turns= []
+    for turn in ordered_turns:
         if turn in user.turns:
             turn_obj = {
                 "content" : turn.content,
@@ -246,6 +247,16 @@ def get_turns(game, user):
             }
             turns.append(turn_obj)
     return turns
+
+def get_ordered_turns(turns):
+    tuples = []
+    for turn in turns:
+        tuples.append((turn, turn.timestamp))
+    tuples.sort(key=lambda x: x[1])
+    ordered_turns = []
+    for tuple in tuples:
+        ordered_turns.append(tuple[0])
+    return ordered_turns
 
 def verbose_timestamp(timestamp):
     verbose = ""

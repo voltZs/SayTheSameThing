@@ -91,13 +91,39 @@ body{
 }
 
 .stst_container{
-  padding: 25px;
+  z-index: -2;
+  padding: 25px 60px;;
   height: 330px;
   border-radius: 35px;
-  background-color: rgb(255, 243, 232)
+  background-color: rgb(255, 243, 232);
+  overflow: scroll;
+}
+
+.stst_round{
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.stst_left{
+  box-sizing: border-box;
+  display: inline-block;
+  flex-basis: content;
+  max-width: 48%;
+}
+
+.stst_right{
+  box-sizing: border-box;
+  display: inline-block;
+  flex-basis: content;
+  max-width: 50%;
 }
 
 .vsContainer{
+  border-radius: 20px;
+  padding: 10px;
   position: relative;
   display: flex;
   margin-top: 10px;
@@ -145,7 +171,7 @@ body{
   position: relative;
   font-size: 19px;
   font-weight: bold;
-  width: 64%;
+  width:70%;
   margin: 8px auto;
   padding: 5px;
   text-align: center;
@@ -153,69 +179,95 @@ body{
   background-color: rgb(255, 155, 68);
 }
 
+.turnBubble{
+  position: relative;
+  font-size: 19px;
+  font-weight: bold;
+  padding: 5px 15px;
+  text-align: center;
+  border-radius: 15px;
+}
+
+.turnTimestampLeft{
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.35;
+  text-align: left;
+  margin-left: 8px;
+}
+.turnTimestampRight{
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.35;
+  text-align: right;
+  margin-right: 8px;
+}
+
 .hoverableOrange:hover{
   background-color: rgb(255, 243, 232);
   cursor: pointer;
 }
 
-.bubblecomp1{
-  z-index: -1;
+.compOrange{
+  background-color: rgb(255, 155, 68);
+}
+.compDark{
+  background-color: rgb(255, 119, 0);
+}
+.compWhite{
+  background-color: rgb(255, 243, 232);
+}
+
+.bubblecomp1right{
+
   position: absolute;
   right: -10px;
   bottom: 0;
-  background-color: rgb(255, 155, 68);
   border-radius: 50%;
   width: 20px;
   height: 20px;
 }
-.bubblecomp1left{
-  z-index: -1;
-  position: absolute;
-  left: -10px;
-  bottom: 0;
-  background-color: rgb(255, 155, 68);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-}
+.bubblecomp2right{
 
-
-.bubblecomp2{
-  z-index: -1;
   position: absolute;
   right: -20px;
   bottom: 0;
-  background-color: rgb(255, 119, 0);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+.bubblecomp3right{
+
+  position: absolute;
+  right: -20px;
+  bottom: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.bubblecomp1left{
+
+  position: absolute;
+  left: -10px;
+  bottom: 0;
   border-radius: 50%;
   width: 20px;
   height: 20px;
 }
 .bubblecomp2left{
-  z-index: -1;
+
   position: absolute;
   left: -20px;
   bottom: 0;
-  background-color: rgb(255, 119, 0);
   border-radius: 50%;
   width: 20px;
   height: 20px;
 }
-
-.bubblecomp3{
-  z-index: -1;
-  position: absolute;
-  right: -20px;
-  bottom: 10px;
-  background-color: rgb(255, 119, 0);
-  width: 20px;
-  height: 20px;
-}
 .bubblecomp3left{
-  z-index: -1;
+
   position: absolute;
-  right: -20px;
+  left: -20px;
   bottom: 10px;
-  background-color: rgb(255, 119, 0);
   width: 20px;
   height: 20px;
 }
@@ -225,31 +277,28 @@ body{
 
 
 .bubblecomp1leftlarge{
-  z-index: -1;
+
   position: absolute;
   left: -20px;
   bottom: 0;
-  background-color: rgb(255, 155, 68);
   border-radius: 50%;
   width: 40px;
   height: 40px;
 }
 .bubblecomp2leftlarge{
-  z-index: -1;
+
   position: absolute;
   left: -40px;
   bottom: 0;
-  background-color: rgb(255, 119, 0);
   border-radius: 50%;
   width: 40px;
   height: 40px;
 }
 .bubblecomp3leftlarge{
-  z-index: -1;
+
   position: absolute;
   left: -40px;
   bottom: 20px;
-  background-color: rgb(255, 119, 0);
   width: 40px;
   height: 40px;
 }
@@ -342,6 +391,9 @@ input[type="submit"]:hover{
   cursor: pointer;
 }
 
+.textAlignMiddle{
+  text-align: center;
+}
 
 .whiteOrange{
   background-color: rgb(255, 243, 232);

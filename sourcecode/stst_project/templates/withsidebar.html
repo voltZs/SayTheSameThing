@@ -10,9 +10,9 @@
 
 {% block main_content %}
   <div class="pageContainer containerBubble">
-    <div class="bubblecomp1leftlarge"></div>
-    <div class="bubblecomp2leftlarge"></div>
-    <div class="bubblecomp3leftlarge"></div>
+    <div class="bubblecomp1leftlarge compOrange"></div>
+    <div class="bubblecomp2leftlarge compDark"></div>
+    <div class="bubblecomp3leftlarge compDark"></div>
     {% block page_content %}
     {% endblock %}
   </div>
@@ -24,9 +24,9 @@
     <a href="/user_settings" id="user_sidebar_anchor">
       <div id="userSideBar">
         <div id="avatarBub" class="rightContBubble hoverableOrange" >
-          <div class="bubblecomp1"></div>
-          <div class="bubblecomp2"></div>
-          <div class="bubblecomp3"></div>
+          <div class="bubblecomp1right compOrange"></div>
+          <div class="bubblecomp2right compDark"></div>
+          <div class="bubblecomp3right compDark"></div>
           <img src="{{url_for('static', filename= 'avatars/'+ current_user.avatar|string +'.png')}}" alt="" width="120" height="120">
         </div>
 
@@ -48,34 +48,34 @@
 
     <a href="/play_random">
       <div class="rightContBubble hoverableOrange">
-        <div class="bubblecomp1"></div>
-        <div class="bubblecomp2"></div>
-        <div class="bubblecomp3"></div>
+        <div class="bubblecomp1right compOrange"></div>
+        <div class="bubblecomp2right compDark"></div>
+        <div class="bubblecomp3right compDark"></div>
         Play!
       </div>
     </a>
 
     <a href="/games">
       <div class="rightContBubble hoverableOrange">
-        <div class="bubblecomp1"></div>
-        <div class="bubblecomp2"></div>
-        <div class="bubblecomp3"></div>
+        <div class="bubblecomp1right compOrange"></div>
+        <div class="bubblecomp2right compDark"></div>
+        <div class="bubblecomp3right compDark"></div>
         My Games
       </div>
     </a>
     <a href="/buddies">
       <div class="rightContBubble hoverableOrange">
-        <div class="bubblecomp1"></div>
-        <div class="bubblecomp2"></div>
-        <div class="bubblecomp3"></div>
+        <div class="bubblecomp1right compOrange"></div>
+        <div class="bubblecomp2right compDark"></div>
+        <div class="bubblecomp3right compDark"></div>
         My Buddies
       </div>
     </a>
     <a href="/users">
       <div class="rightContBubble hoverableOrange">
-        <div class="bubblecomp1"></div>
-        <div class="bubblecomp2"></div>
-        <div class="bubblecomp3"></div>
+        <div class="bubblecomp1right compOrange"></div>
+        <div class="bubblecomp2right compDark"></div>
+        <div class="bubblecomp3right compDark"></div>
         Find User
       </div>
     </a>
