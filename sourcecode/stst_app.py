@@ -151,45 +151,82 @@ def user_page(username):
 def play(game_id):
     game = Game.query.get(game_id)
     if game:
-        other_user = {}
+        other_user = get_other_user(game)
         if current_user in game.users:
-            for user in game.users:
-                if not user == current_user:
-                    other_user = user
-            # IMPLEMENT FUNCTION TO GO THROUGH TURNS, retrieve only the user's and change timestamp into text 'minutes/hours/days ago' and retrieve dictionary
             curr_user_leveling = user_level_info(current_user)
             curr_user_turns = get_turns(game, current_user)
             other_user_leveling = user_level_info(other_user)
             other_user_turns = get_turns(game, other_user)
-            return render_template('game.html', game_id=game.id, other_user=other_user, other_user_leveling=other_user_leveling, other_user_turns=other_user_turns, curr_user_leveling=curr_user_leveling, curr_user_turns=curr_user_turns)
+            game_status = compare_turns(curr_user_turns, other_user_turns)
+            if check_game_won(game, curr_user_turns, other_user_turns):
+                game_status = 'STATUS_WON'
+                game.won = True
+                db.session.add(game)
+                db.session.commit()
+                print(game_status)
+            rounds = (max(len(curr_user_turns ), len(other_user_turns)))
+            return render_template('game.html',
+                                    game_id=game.id,
+                                    other_user=other_user,
+                                    other_user_leveling=other_user_leveling,
+                                    other_user_turns=other_user_turns,
+                                    curr_user_leveling=curr_user_leveling,
+                                    curr_user_turns=curr_user_turns,
+                                    game_status=game_status,
+                                    rounds=rounds)
         else:
             return abort(404, 'You do not have access to this game.'), 404
     else:
         return abort(404, 'This game does not exist or has been deleted'), 404
-
 
 @app.route('/submit_answer')
 @login_required
 def create_turn():
     game = Game.query.get(request.args.get('game_id'))
     user = User.query.get(request.args.get('user_id'))
+    game_status = request.args.get('game_status')
     answer = request.args.get('answer')
     turn = Turn(answer)
 
-    if game and user:
-        if user == current_user:
-            game.turns.append(turn)
-            user.turns.append(turn)
-            db.session.add(game)
-            db.session.add(user)
-            db.session.commit()
-            # REDIRECT MIGHT GET ELIMINATED AFTER MAKING THIS ASYNCHRONOUS
-            return redirect(url_for('play', game_id=game.id))
+    if game_status == 'STATUS_GO':
+        if game and user:
+            if user == current_user:
+                game.turns.append(turn)
+                user.turns.append(turn)
+                db.session.add(game)
+                db.session.add(user)
+                db.session.commit()
+                # REDIRECT MIGHT GET ELIMINATED AFTER MAKING THIS ASYNCHRONOUS
+                return redirect(url_for('play', game_id=game.id))
+            else:
+                return abort(404, 'You can only submit your own turns'), 404
         else:
-            return abort(404, 'You can only submit your own turns'), 404
+            return abort(404, 'Game ID or User ID not found.'), 404
+    elif game_status == 'STATUS_WON':
+        return abort(404, "This game is finished"), 404
     else:
-        return abort(404, 'Game ID or User ID not found.'), 404
+        return abort(404, "You cannot submit an answer when it's the opponent's turn"), 404
 
+############################ POLLING ############################
+
+@app.route('/poll')
+def poll():
+client_state = request.args.get("game_id")
+
+    #remove html encoding + whitesapce from client state
+    # html_parser = HTMLParser.HTMLParser()
+    # client_state = html_parser.unescape(client_state)
+    # client_state = "".join(client_state.split())
+
+    #poll the database
+    while True:
+        time.sleep(0.5)
+        data =
+        json_state = to_json(data)
+        json_state = "".join(data) #remove whitespace
+
+        if json_state != client_state:
+            return "CHANGE"
 
 
 ###################### DATA RETRIEVING VIEWS ##################################
@@ -215,6 +252,8 @@ def page_not_found(error):
     return render_template('err404.html', error_msg=error, curr_user_leveling=curr_user_leveling), 404
 
 
+####################   OTHER FUNCTIONS   ############################
+
 def check_username_existing(username_input):
     if User.query.filter_by(username=username_input).first():
         raise Exception("Username already registered.")
@@ -235,6 +274,13 @@ def calculate_level(xp):
 
 def calculate_xp_to_level(xp):
     return float(400/700)
+
+def get_other_user(game):
+    other_user ={}
+    for user in game.users:
+        if not user == current_user:
+            other_user = user
+    return other_user
 
 def get_turns(game, user):
     ordered_turns = get_ordered_turns(game.turns)
@@ -277,5 +323,24 @@ def verbose_timestamp(timestamp):
         verbose = str(int(passed.seconds)) + " seconds ago"
     return verbose
 
+def compare_turns(current_user_turns, other_user_turns):
+    if len(other_user_turns) >= len(current_user_turns):
+        return 'STATUS_GO'
+    elif len(other_user_turns) < len(current_user_turns):
+        return 'STATUS_WAIT'
+
+def check_game_won(game, turns1, turns2):
+    if len(turns1) == len(turns2):
+        last_item1='A'
+        last_item2='B'
+        if turns1:
+            last_item1 = turns1[len(turns1)-1]['content']
+        if turns2:
+            last_item2 = turns2[len(turns2)-1]['content']
+        print(last_item1)
+        print(last_item2)
+        return last_item1.casefold() == last_item2.casefold()
+    return False
+
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True, threaded=True)

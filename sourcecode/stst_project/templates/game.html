@@ -15,40 +15,56 @@ Play - Say The Same Thing
   <div class="stst_container">
     <h2 class="textAlignMiddle">It's easy guys. Just say the same thing!</h2>
     <a href="/"><h4 class="textAlignMiddle">Read game rules</h4></a>
-    {% for x in range(10) %}
-      <div class=stst_round>
+    {% for x in range(rounds) %}
+      {% if not game_status == 'STATUS_WON' or (game_status == 'STATUS_WON' and x < rounds-1) %}
+      <div class="stst_round">
         <div class="stst_left">
+          {% if other_user_turns|length >= x+1 %}
             <div class="turnBubble compDark">
               <div class="bubblecomp1left compDark"></div>
               <div class="bubblecomp2left compWhite"></div>
               <div class="bubblecomp3left compWhite"></div>
 
-              {% if other_user_turns|length >= x+1 %}
+
+                {% if x <= curr_user_turns|length -1 %}
                 {{other_user_turns[x].content}}
-              {% endif %}
+                {% else %}
+                <span class="whiteOrangeText">Make your answer to reveal</span>
+                {% endif %}
             </div>
             <div class="turnTimestampLeft">
-              {% if other_user_turns|length >= x+1 %}
                 {{other_user_turns[x].timestamp}}
-              {% endif %}
             </div>
+          {% endif %}
         </div>
         <div class="stst_right">
+          {% if curr_user_turns|length >= x+1 %}
           <div class="turnBubble compDark">
             <div class="bubblecomp1right compDark"></div>
             <div class="bubblecomp2right compWhite"></div>
             <div class="bubblecomp3right compWhite"></div>
-            {% if curr_user_turns|length >= x+1 %}
               {{curr_user_turns[x].content}}
-            {% endif %}
+
           </div>
           <div class="turnTimestampRight">
-            {% if curr_user_turns|length >= x+1 %}
               {{curr_user_turns[x].timestamp}}
-            {% endif %}
           </div>
+          {% endif %}
         </div>
       </div>
+      {% else %}
+      <h2 class="textAlignMiddle">You said the same thing!</h2>
+      <div class="turnBubble compDark">
+        <div class="bubblecomp1left compDark"></div>
+        <div class="bubblecomp2left compWhite"></div>
+        <div class="bubblecomp3left compWhite"></div>
+        <div class="bubblecomp1right compDark"></div>
+        <div class="bubblecomp2right compWhite"></div>
+        <div class="bubblecomp3right compWhite"></div>
+        {{curr_user_turns[x].content}}
+      </div>
+      {% endif %}
+
     {% endfor %}
 
     <div class="stst_common">
@@ -58,7 +74,7 @@ Play - Say The Same Thing
 
   <div class="vsContainer compDark">
     <a href="/user/{{other_user.username}}">
-      <div class="miniUserLeft" id="otherPlayerMini">
+      <div class="miniUser miniUserLeft" id="otherPlayerMini">
         <img class="miniAvatar"  src="{{url_for('static', filename='avatars/'+ other_user.avatar|string +'.png')}}" alt="">
         <div class="miniUserInfo">
           <div class="miniUsername">
@@ -73,15 +89,16 @@ Play - Say The Same Thing
 
     <div class="answerDiv">
       <form action="/submit_answer">
-        <input type="text" name="answer" value="" placeholder="Say The Same Thing" class="answerBubble">
+        <input type="text" name="answer" value="" placeholder="Say The Same Thing" class="answerBubble" required>
         <input type="hidden" name="game_id" value="{{game_id}}">
         <input type="hidden" name="user_id" value="{{current_user.id}}">
+        <input type="hidden" name="game_status" value="{{game_status}}">
       </form>
 
     </div>
 
     <a href="/games">
-      <div class="miniUserRight" id="mePlayerMini">
+      <div class="miniUser miniUserRight" id="mePlayerMini">
         <img class="miniAvatar"  src="{{url_for('static', filename='avatars/'+ current_user.avatar|string +'.png')}}" alt="">
         <div class="miniUserInfo">
           <div class="miniUsername">

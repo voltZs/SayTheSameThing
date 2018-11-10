@@ -118,7 +118,7 @@ body{
   box-sizing: border-box;
   display: inline-block;
   flex-basis: content;
-  max-width: 50%;
+  max-width: 48%;
 }
 
 .vsContainer{
@@ -128,6 +128,10 @@ body{
   display: flex;
   margin-top: 10px;
   text-align: center;
+}
+
+.miniUser:hover{
+  color: rgb(255, 243, 232)
 }
 .miniUserLeft{
   width: 100px;
