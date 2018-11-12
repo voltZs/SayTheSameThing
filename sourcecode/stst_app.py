@@ -154,17 +154,26 @@ def play(game_id):
     if game:
         other_user = get_other_user(game)
         if current_user in game.users:
-            curr_user_leveling = user_level_info(current_user)
             curr_user_turns = get_turns(game, current_user)
-            other_user_leveling = user_level_info(other_user)
             other_user_turns = get_turns(game, other_user)
             game_status = compare_turns(curr_user_turns, other_user_turns)
-            if check_game_won(game, curr_user_turns, other_user_turns):
+            rounds = (max(len(curr_user_turns ), len(other_user_turns)))
+            earnable_xp = get_game_xp(rounds)
+            if check_game_won(curr_user_turns, other_user_turns):
+                # add XP points if not already added
+                if not game in current_user.retrieved_from_games:
+                    current_user.xp += earnable_xp
+                    current_user.retrieved_from_games.append(game)
+                    print("adding xp:" + str(earnable_xp) + " to " + current_user.username)
+                    db.session.add(current_user)
+                    db.session.commit()
                 game_status = 'STATUS_WON'
                 game.won = True
                 db.session.add(game)
                 db.session.commit()
-            rounds = (max(len(curr_user_turns ), len(other_user_turns)))
+            curr_user_leveling = user_level_info(current_user)
+            other_user_leveling = user_level_info(other_user)
+
             return render_template('game.html',
                                     game_id=game.id,
                                     other_user=other_user,
@@ -172,6 +181,7 @@ def play(game_id):
                                     other_user_turns=other_user_turns,
                                     curr_user_leveling=curr_user_leveling,
                                     curr_user_turns=curr_user_turns,
+                                    earnable_xp=earnable_xp,
                                     game_status=game_status,
                                     rounds=rounds)
         else:
@@ -209,34 +219,33 @@ def create_turn():
 
 ############################ POLLING ############################
 
-# @app.route('/poll')
+@app.route('/poll')
+def poll_trial():
+    passed_in_turns = request.args.get("otherTurns")
+    game_id = request.args.get("gameId")
+    print("Passed in:" + str(passed_in_turns))
+    counter = 0
+    while True:
+        time.sleep(3)
+        counter += 1
+        db.session.commit() #need to run this to get real time data from db for some reason
+        game = Game.query.get(game_id)
+        other_user = get_other_user(game)
+        other_user_turns = get_turns(game, other_user)
+        numOfTurns = str(len(other_user_turns))
+        #if there is a change or a minute has passed return the number
+        if not numOfTurns == passed_in_turns or counter > 20:
+            return numOfTurns
+
+# @app.route('/poll_other_user_moves')
 # def poll():
 #     passed_in_turns = request.args.get("otherTurns")
 #     game_id = request.args.get("gameId")
-#
-#     while True:
-#         time.sleep(2)
-#         game = Game.query.get(game_id)
-#         other_user = get_other_user(game)
-#         other_user_turns = get_turns(game, other_user)
-#         numOfTurns = str(len(other_user_turns))
-#         print(numOfTurns)
-#         print(passed_in_turns)
-#         print(other_user.username)
-#         print(current_user.username + " " + str(numOfTurns == passed_in_turns))
-#
-#         if not numOfTurns == passed_in_turns:
-#             return numOfTurns
-
-@app.route('/poll_other_user_moves')
-def poll():
-    passed_in_turns = request.args.get("otherTurns")
-    game_id = request.args.get("gameId")
-    game = Game.query.get(game_id)
-    other_user = get_other_user(game)
-    other_user_turns = get_turns(game, other_user)
-    numOfTurns = str(len(other_user_turns))
-    return numOfTurns
+#     game = Game.query.get(game_id)
+#     other_user = get_other_user(game)
+#     other_user_turns = get_turns(game, other_user)
+#     numOfTurns = str(len(other_user_turns))
+#     return numOfTurns
 
 ###################### DATA RETRIEVING VIEWS ##################################
 
@@ -273,16 +282,26 @@ def check_email_existing(email_input):
 
 def user_level_info(user):
     level_info = {
-        "xp_to_level": calculate_xp_to_level(user.xp),
+        "xp_to_level": calculate_xp_to_level(user),
         "level" : calculate_level(user.xp)
     }
     return level_info
 
-def calculate_level(xp):
-    return int(xp/20)
+def get_level_marks():
+    return [((150*x*x)) for x in range(0,50)]
 
-def calculate_xp_to_level(xp):
-    return float(400/700)
+def calculate_level(xp):
+    level_marks = get_level_marks()
+    for mark_index in range(len(level_marks)):
+        if xp >= level_marks[mark_index] and xp < level_marks[mark_index+1]:
+            return mark_index
+
+def calculate_xp_to_level(user):
+    level = calculate_level(user.xp)
+    level_marks = get_level_marks()
+    previous_mark = level_marks[level]
+    next_mark = level_marks[level+1]
+    return (user.xp-previous_mark)/(next_mark)
 
 def get_other_user(game):
     other_user ={}
@@ -338,7 +357,7 @@ def compare_turns(current_user_turns, other_user_turns):
     elif len(other_user_turns) < len(current_user_turns):
         return 'STATUS_WAIT'
 
-def check_game_won(game, turns1, turns2):
+def check_game_won(turns1, turns2):
     if len(turns1) == len(turns2):
         last_item1='A'
         last_item2='B'
@@ -348,6 +367,15 @@ def check_game_won(game, turns1, turns2):
             last_item2 = turns2[len(turns2)-1]['content']
         return last_item1.casefold() == last_item2.casefold()
     return False
+
+def get_game_xp(rounds):
+    if not rounds:
+        rounds = 1
+    xps = [150, 100, 80, 60, 50, 45, 40, 35, 30, 27, 24, 21, 18, 16, 14, 12, 10]
+    if rounds > len(xps):
+        return 5
+    else:
+        return xps[rounds-1]
 
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)

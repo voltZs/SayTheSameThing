@@ -9,6 +9,10 @@ games = db.Table('games',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('game_id', db.Integer, db.ForeignKey('game.id'), primary_key=True))
 
+point_retrieval = db.Table('point_retrieval',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('game_id', db.Integer, db.ForeignKey('game.id'), primary_key=True))
+
 # buddies = db.Table('buddies',
 #     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
 #     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True))
@@ -28,6 +32,8 @@ class User(db.Model, UserMixin):
     avatar = db.Column(db.Integer, nullable = False, default=0)
     games = db.relationship('Game', secondary='games', lazy='subquery', backref=db.backref('users', lazy=True))
     turns = db.relationship('Turn', backref='user', lazy=True)
+    retrieved_from_games = db.relationship('Game', secondary='point_retrieval', lazy='subquery', backref=db.backref('point_retrievers', lazy=True))
+
     # game_requests =
     # buddies = db.relationship('User',
     # buddy_requests =

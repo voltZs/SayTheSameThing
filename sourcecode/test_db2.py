@@ -15,7 +15,12 @@ retrieved_user2 = User.query.filter_by(username='honey.bunny').first()
 game = Game()
 game.users.append(retrieved_user1)
 game.users.append(retrieved_user2)
+
+# turn = Turn('woohooo')
+# game.turns.append(turn)
+# retrieved_user1.turns.append(turn)
 db.session.add(game)
+db.session.add(retrieved_user1)
 db.session.commit()
 #
 # retrieved_user1 = User.query.filter_by(username='tralala').first()

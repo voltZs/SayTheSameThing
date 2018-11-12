@@ -54,15 +54,19 @@ Play - Say The Same Thing
       </div>
       {% else %}
       <h2 class="textAlignMiddle">You said the same thing!</h2>
-      <div class="turnBubble compDark">
-        <div class="bubblecomp1left compDark"></div>
-        <div class="bubblecomp2left compWhite"></div>
-        <div class="bubblecomp3left compWhite"></div>
-        <div class="bubblecomp1right compDark"></div>
-        <div class="bubblecomp2right compWhite"></div>
-        <div class="bubblecomp3right compWhite"></div>
-        {{curr_user_turns[x].content}}
+      <div class="stst_common">
+        <div class="turnBubble compDark">
+          <div class="bubblecomp1left compDark"></div>
+          <div class="bubblecomp2left compWhite"></div>
+          <div class="bubblecomp3left compWhite"></div>
+          <div class="bubblecomp1right compDark"></div>
+          <div class="bubblecomp2right compWhite"></div>
+          <div class="bubblecomp3right compWhite"></div>
+          {{curr_user_turns[x].content}}
+        </div>
       </div>
+      <br>
+      <div class="textAlignMiddle">And earned {{earnable_xp}} experience points</div>
       {% endif %}
 
     {% endfor %}
@@ -89,12 +93,23 @@ Play - Say The Same Thing
 
     <div class="answerDiv compDark">
       <form action="/submit_answer">
-        <input type="text" name="answer" value="" placeholder="Say The Same Thing" class="answerBubble" required>
+        <input type="text" name="answer" value=""
+                {% if game_status == 'STATUS_GO' %}
+                placeholder="Say The Same Thing"
+                {% elif game_status == 'STATUS_WAIT' %}
+                placeholder="Waiting for opponent"
+                disabled
+                {% elif game_status == 'STATUS_WON' %}
+                placeholder="Nice one!"
+                disabled
+                {% endif %}
+                class="answerBubble" required>
         <input type="hidden" name="game_id" value="{{game_id}}">
         <input type="hidden" name="user_id" value="{{current_user.id}}">
         <input type="hidden" name="game_status" value="{{game_status}}">
       </form>
-      <div>XP: 300/2000</div>
+      <br>
+      <div>XP: {{earnable_xp}}/150</div>
       <div>Turns:</div>
 
     </div>
@@ -120,5 +135,5 @@ Play - Say The Same Thing
 <div id="data-div" data-gameid="{{game_id}}"></div>
 
 <script src="{{url_for('static', filename='javascript/game.js')}}"></script>
-<script src="{{url_for('static', filename='javascript/polling_try.js')}}"></script>
+<script src="{{url_for('static', filename='javascript/polling_game.js')}}"></script>
 {% endblock %}
