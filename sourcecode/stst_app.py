@@ -4,6 +4,7 @@ from stst_project.models import User, Game, Turn
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import time
 
 db.create_all()
 
@@ -163,7 +164,6 @@ def play(game_id):
                 game.won = True
                 db.session.add(game)
                 db.session.commit()
-                print(game_status)
             rounds = (max(len(curr_user_turns ), len(other_user_turns)))
             return render_template('game.html',
                                     game_id=game.id,
@@ -209,25 +209,34 @@ def create_turn():
 
 ############################ POLLING ############################
 
-@app.route('/poll')
+# @app.route('/poll')
+# def poll():
+#     passed_in_turns = request.args.get("otherTurns")
+#     game_id = request.args.get("gameId")
+#
+#     while True:
+#         time.sleep(2)
+#         game = Game.query.get(game_id)
+#         other_user = get_other_user(game)
+#         other_user_turns = get_turns(game, other_user)
+#         numOfTurns = str(len(other_user_turns))
+#         print(numOfTurns)
+#         print(passed_in_turns)
+#         print(other_user.username)
+#         print(current_user.username + " " + str(numOfTurns == passed_in_turns))
+#
+#         if not numOfTurns == passed_in_turns:
+#             return numOfTurns
+
+@app.route('/poll_other_user_moves')
 def poll():
-client_state = request.args.get("game_id")
-
-    #remove html encoding + whitesapce from client state
-    # html_parser = HTMLParser.HTMLParser()
-    # client_state = html_parser.unescape(client_state)
-    # client_state = "".join(client_state.split())
-
-    #poll the database
-    while True:
-        time.sleep(0.5)
-        data =
-        json_state = to_json(data)
-        json_state = "".join(data) #remove whitespace
-
-        if json_state != client_state:
-            return "CHANGE"
-
+    passed_in_turns = request.args.get("otherTurns")
+    game_id = request.args.get("gameId")
+    game = Game.query.get(game_id)
+    other_user = get_other_user(game)
+    other_user_turns = get_turns(game, other_user)
+    numOfTurns = str(len(other_user_turns))
+    return numOfTurns
 
 ###################### DATA RETRIEVING VIEWS ##################################
 
@@ -279,7 +288,7 @@ def get_other_user(game):
     other_user ={}
     for user in game.users:
         if not user == current_user:
-            other_user = user
+            other_user = User.query.get(user.id)
     return other_user
 
 def get_turns(game, user):
@@ -337,8 +346,6 @@ def check_game_won(game, turns1, turns2):
             last_item1 = turns1[len(turns1)-1]['content']
         if turns2:
             last_item2 = turns2[len(turns2)-1]['content']
-        print(last_item1)
-        print(last_item2)
         return last_item1.casefold() == last_item2.casefold()
     return False
 

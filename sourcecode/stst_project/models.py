@@ -25,7 +25,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Text, nullable = False)
     joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     xp = db.Column(db.Integer, nullable = False)
-    avatar = db.Column(db.Integer, nullable = False, default=1)
+    avatar = db.Column(db.Integer, nullable = False, default=0)
     games = db.relationship('Game', secondary='games', lazy='subquery', backref=db.backref('users', lazy=True))
     turns = db.relationship('Turn', backref='user', lazy=True)
     # game_requests =

@@ -130,9 +130,6 @@ body{
   text-align: center;
 }
 
-.miniUser:hover{
-  color: rgb(255, 243, 232)
-}
 .miniUserLeft{
   width: 100px;
 }
@@ -146,8 +143,12 @@ body{
 }
 
 .answerDiv{
+  border-radius: 20px;
+  padding: 15px;
   position: relative;
+  margin: 0 15px;;
   flex-grow: 1;
+  align-self: flex-start;
 }
 
 .miniAvatar{
@@ -171,15 +172,18 @@ body{
   width: 30%;
 }
 
-.rightContBubble{
+.rightContItem{
   position: relative;
   font-size: 19px;
   font-weight: bold;
-  width:70%;
   margin: 8px auto;
-  padding: 5px;
   text-align: center;
   border-radius: 15px;
+}
+
+.rightContBubble{
+  width:70%;
+  padding: 5px;
   background-color: rgb(255, 155, 68);
 }
 
@@ -381,11 +385,6 @@ input{
 }
 input.answerBubble{
   width: 95%;
-  position: absolute;
-  box-sizing: border-box;
-  top: 0;
-  left: 49.5%;
-  transform: translateX(-50%);
 }
 input[type="submit"]{
   font-weight: bold;

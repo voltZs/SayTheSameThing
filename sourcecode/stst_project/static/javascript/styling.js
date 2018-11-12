@@ -16,12 +16,8 @@ bubbles.forEach(function(elem){
 });
 
 userSideBar.addEventListener("mouseenter", function(){
-  avatarBubble.classList.add("whiteOrange");
-  bubbles[0].getElementsByClassName('bubblecomp1right')[0].classList.add("whiteOrange");
   userInfoCont.classList.add("whiteOrangeText");
 });
 userSideBar.addEventListener("mouseleave", function(){
-  avatarBubble.classList.remove("whiteOrange");
-  bubbles[0].getElementsByClassName('bubblecomp1right')[0].classList.remove("whiteOrange");
   userInfoCont.classList.remove("whiteOrangeText");
 });
