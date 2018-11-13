@@ -97,9 +97,9 @@ def my_games():
     if users_games:
         for game in users_games:
             if game.won:
-                finished_games.append(game)
+                finished_games.append(create_game_dict(game))
             else:
-                current_games.append(game)
+                current_games.append(create_game_dict(game))
 
     curr_user_leveling = user_level_info(current_user)
     return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling)
@@ -164,6 +164,22 @@ def add_buddy(username):
         return abort(404, "The user you are trying to add as a buddy was not found")
     return redirect(url_for('my_buddies'))
 
+@app.route('/user/<username>/remove_buddy')
+@login_required
+def remove_buddy(username):
+    buddy = User.query.filter_by(username=username).first()
+    if buddy:
+        if buddy in current_user.buddies:
+            current_user.buddies.remove(buddy)
+            db.session.add(current_user)
+            db.session.commit()
+        else:
+            flash("This user is not in your buddies")
+            return redirect('/user/'+username)
+    else:
+        return abort(404, "The user you are trying to remove from buddies was not found")
+    return redirect(url_for('my_buddies'))
+
 @app.route('/play_random')
 @login_required
 def play_random():
@@ -205,7 +221,6 @@ def play(game_id):
                 if not game in current_user.retrieved_from_games:
                     current_user.xp += earnable_xp
                     current_user.retrieved_from_games.append(game)
-                    print("adding xp:" + str(earnable_xp) + " to " + current_user.username)
                     db.session.add(current_user)
                     db.session.commit()
                 game_status = 'STATUS_WON'
@@ -264,7 +279,6 @@ def create_turn():
 def poll_game():
     passed_in_turns = request.args.get("otherTurns")
     game_id = request.args.get("gameId")
-    print("Passed in:" + str(passed_in_turns))
     counter = 0
     while True:
         time.sleep(3)
@@ -285,7 +299,6 @@ def poll_waiting_users():
     # check if I am still waiting for a game if yes look for others who are too
     while True:
         db.session.commit()
-        print(current_user.username + " looking for opponent")
         if not current_user.waiting_for_a_game==True:
             my_games = current_user.games
             return str(my_games[len(my_games)-1].id)
@@ -303,36 +316,6 @@ def poll_waiting_users():
         counter += 1
         if counter > 22:
             return None
-
-#     passed_in_turns = request.args.get("otherTurns")
-#     game_id = request.args.get("gameId")
-#     print("Passed in:" + str(passed_in_turns))
-#     counter = 0
-#     while True:
-#         time.sleep(3)
-#         counter += 1
-#         db.session.commit() #need to run this to get real time data from db for some reason
-#         game = Game.query.get(game_id)
-#         other_user = get_other_user(game)
-#         other_user_turns = get_turns(game, other_user)
-#         numOfTurns = str(len(other_user_turns))
-#         #if there is a change or a minute has passed return the number
-#         if not numOfTurns == passed_in_turns or counter > 20:
-#             return numOfTurns
-
-
-###################### DATA RETRIEVING VIEWS ##################################
-
-@app.route('/current_user_details')
-def current_user_details():
-    user_details = {
-        "username" : current_user.username,
-        "xp": current_user.xp,
-        "xp_to_level": calculate_xp_to_level(current_user.xp),
-        "level" : calculate_level(current_user.xp),
-        "email" : current_user.email,
-    }
-    return jsonify(user_details)
 
 ################################# ERRORS ##################################
 
@@ -452,6 +435,21 @@ def get_game_xp(rounds):
         return 5
     else:
         return xps[rounds-1]
+
+def create_game_dict(game):
+    game_dict = {}
+    game_dict['id'] = game.id
+    for user in game.users:
+        if not user == current_user:
+            game_dict['opponent'] = user
+    curr_user_turns = get_turns(game, current_user)
+    other_user_turns = get_turns(game, game_dict['opponent'])
+    rounds = (max(len(curr_user_turns ), len(other_user_turns)))
+    game_dict['turns'] = rounds
+    game_dict['status'] = compare_turns(curr_user_turns, other_user_turns)
+    if game.won:
+        game_dict['status'] = 'STATUS_WON'
+    return game_dict
 
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)

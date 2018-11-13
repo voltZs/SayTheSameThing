@@ -32,7 +32,7 @@ function pollWaitingUsers() {
 
           console.log(jqXHR.status + "," + textStatus + ", " + errorThrown);
 
-          // pollWaitingUsers();
+          pollWaitingUsers();
 
       }
   });

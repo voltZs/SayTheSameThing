@@ -1,12 +1,5 @@
 {% extends "main.html" %}
 
-{% block in_head %}
-{% if curr_user_leveling %}
-  <style>
-  #currentUserBarFill{ width: {{curr_user_leveling.xp_to_level*100}}%}
-  </style>
-{% endif %}
-{% endblock %}
 
 {% block main_content %}
   <div class="pageContainer containerBubble">
@@ -18,7 +11,11 @@
   </div>
 
 
-
+  {% if curr_user_leveling %}
+    <style>
+    #currentUserBarFill{ width: {{curr_user_leveling.xp_to_level*100}}%}
+    </style>
+  {% endif %}
 
   <div class="rightContainer">
     <a href="/user_settings" id="user_sidebar_anchor">

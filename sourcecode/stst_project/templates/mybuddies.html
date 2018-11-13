@@ -6,8 +6,27 @@
 
 
 {% block page_content %}
-  {% for buddy in buddies %}
-    {{buddy.username}}
-  {% endfor %}
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <h2 class="textAlignMiddle">My buddies</h2>
+  <table>
+    <tbody>
+      {% for buddy in buddies %}
+        <tr>
+            <td>
+              <a href="/user/{{buddy.username}}">
+                <div class="resultItemButton resultItemUser compWhite">
+                  {{buddy.username}}
+                </div>
+              </a>
+            </td>
+            <td>
+              <a href="/start_game/{{buddy.username}}">
+                <div class="resultItemButton compDark">
+                  Start Game
+                </div>
+              </a>
+            </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

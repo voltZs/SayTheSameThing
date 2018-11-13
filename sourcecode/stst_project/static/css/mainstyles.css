@@ -370,10 +370,6 @@ body{
   margin-left: 5px;
 }
 
-.resultItemButton.compDark{
-  float: right;
-}
-
 .floatContainer{
   position: fixed;
   top: 60px;

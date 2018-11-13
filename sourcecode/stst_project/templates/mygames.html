@@ -6,9 +6,80 @@
 
 
 {% block page_content %}
+  <h2 class="textAlignMiddle">My Games</h2>
   <h3>Current games</h3>
-  {{current_games}}
+  <table>
+    <tbody>
+      <tr>
+        <th>Opponent</th>
+        <th>Status</th>
+        <th>Turns</th>
+      </tr>
+      {% for game in current_games %}
+      <tr>
+        <td>
+          <a href="/play/{{game['id']}}">
+            <div class="resultItemButton compWhite miniUsername">
+              {{game['opponent'].username}}
+            </div>
+          </a>
+        </td>
+
+        <td>
+          <a href="/play/{{game['id']}}">
+            <div class="resultItemButton compDark">
+              {% if game['status'] == "STATUS_GO" %}
+              Ready
+              {% elif game['status'] == "STATUS_WON" %}
+              Finished
+              {% elif game['status'] == "STATUS_WAIT" %}
+              Waiting
+              {% endif %}
+            </div>
+            </a>
+        </td>
+        <td>
+          <a href="/play/{{game['id']}}">
+            <div class="resultItemButton compDark">
+              {{game['turns']}}
+            </div>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+  </table>
+
   <h3>Finished games</h3>
-  {{finished_games}}
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  {% for game in finished_games %}
+  <tr>
+    <td>
+      <a href="/play/{{game['id']}}">
+        <div class="resultItemButton compWhite miniUsername">
+          {{game['opponent'].username}}
+        </div>
+      </a>
+    </td>
+
+    <td>
+      <a href="/play/{{game['id']}}">
+        <div class="resultItemButton compDark">
+          {% if game['status'] == "STATUS_GO" %}
+          Ready
+          {% elif game['status'] == "STATUS_WON" %}
+          Finished
+          {% elif game['status'] == "STATUS_WAIT" %}
+          Waiting
+          {% endif %}
+        </div>
+        </a>
+    </td>
+    <td>
+      <a href="/play/{{game['id']}}">
+        <div class="resultItemButton compDark">
+          {{game['turns']}}
+        </div>
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
 {% endblock %}
