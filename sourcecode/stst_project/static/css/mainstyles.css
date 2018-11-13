@@ -352,7 +352,69 @@ body{
   border-radius: 4px;
 }
 
+.resultItem{
+  max-width: 500px;
+  padding: 0 15px;
+  margin-bottom: 5px;
+}
 
+.resultItemUser{
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.resultItemButton{
+  padding: 5px 15px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.resultItemButton.compDark{
+  float: right;
+}
+
+.floatContainer{
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 280px;
+  padding: 10px;
+  max-height: 400px;
+  overflow: scroll;
+  z-index: 2;
+  border-radius: 20px;
+}
+
+.avatarPick{
+  margin-bottom: 10px;
+}
+.avatarPick:hover{
+  cursor: pointer;
+}
+.previewAvatar:hover{
+  cursor: pointer;
+}
+
+.avatarGrid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.floatContBubble{
+  width: 60%;
+  margin: 0 auto 10px auto;
+}
+
+.avatarBreak{
+  height: 35px;
+}
+
+
+.hidden{
+  display: none;
+}
 
 a{
   padding: 0;

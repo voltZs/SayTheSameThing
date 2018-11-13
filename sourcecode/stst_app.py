@@ -16,11 +16,12 @@ def home():
 @app.route('/register')
 def register():
     if request.args:
+        avatar = request.args.get('avatar')
         username = request.args.get('username')
         password = request.args.get('password')
         password_conf = request.args.get('password_conf')
         email = request.args.get('email')
-        session['prev_form'] = {'username' : username, 'email': email}
+        session['prev_form'] = {'username' : username, 'email': email, 'avatar': avatar}
 
         # make sure all necessary args are not none
         if username == None or password == None or email == None:
@@ -35,9 +36,11 @@ def register():
         except Exception as msg:
             flash(msg.args[0])
             return redirect('/register')
-        user = User(username, email, password)
+        user = User(username, email, password, avatar)
         db.session.add(user)
         db.session.commit()
+        if session.get('prev_form'):
+            session['prev_form'] = None
         return redirect('/login')
     if not session.get('prev_form'):
         session['prev_form'] = {}
@@ -104,8 +107,10 @@ def my_games():
 @app.route('/buddies')
 @login_required
 def my_buddies():
+    buddies = current_user.buddies
+
     curr_user_leveling = user_level_info(current_user)
-    return render_template('mybuddies.html', curr_user_leveling=curr_user_leveling)
+    return render_template('mybuddies.html', curr_user_leveling=curr_user_leveling, buddies=buddies)
 
 
 @app.route('/users')
@@ -143,9 +148,45 @@ def user_page(username):
     curr_user_leveling = user_level_info(current_user)
     return render_template('userpage.html', user=user, curr_user_leveling=curr_user_leveling)
 
-# @app.route('/play_random') <redirect to game but fetch a random player
-# @login_required
-#
+@app.route('/user/<username>/add_buddy')
+@login_required
+def add_buddy(username):
+    new_buddy = User.query.filter_by(username=username).first()
+    if new_buddy:
+        if not new_buddy in current_user.buddies:
+            current_user.buddies.append(new_buddy)
+            db.session.add(current_user)
+            db.session.commit()
+        else:
+            flash("This user is already your buddy")
+            return redirect('/user/'+username)
+    else:
+        return abort(404, "The user you are trying to add as a buddy was not found")
+    return redirect(url_for('my_buddies'))
+
+@app.route('/play_random')
+@login_required
+def play_random():
+    current_user.waiting_for_a_game=True
+    db.session.add(current_user)
+    db.session.commit()
+    curr_user_leveling = user_level_info(current_user)
+    return render_template('gamewait.html', curr_user_leveling=curr_user_leveling)
+
+@app.route('/start_game/<username>')
+@login_required
+def start_game_with_user(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        new_game = Game()
+        new_game.users.append(user)
+        new_game.users.append(current_user)
+        db.session.add(new_game)
+        db.session.commit()
+        return redirect(url_for('play', game_id=new_game.id))
+    else:
+        return abort(404, 'The user you are trying to play with does not exist.')
+
 
 @app.route('/play/<game_id>')
 @login_required
@@ -220,7 +261,7 @@ def create_turn():
 ############################ POLLING ############################
 
 @app.route('/poll')
-def poll_trial():
+def poll_game():
     passed_in_turns = request.args.get("otherTurns")
     game_id = request.args.get("gameId")
     print("Passed in:" + str(passed_in_turns))
@@ -237,15 +278,48 @@ def poll_trial():
         if not numOfTurns == passed_in_turns or counter > 20:
             return numOfTurns
 
-# @app.route('/poll_other_user_moves')
-# def poll():
+@app.route('/find_waiting_user')
+def poll_waiting_users():
+    users = User.query.filter_by(waiting_for_a_game=True)
+    counter = 0
+    # check if I am still waiting for a game if yes look for others who are too
+    while True:
+        db.session.commit()
+        print(current_user.username + " looking for opponent")
+        if not current_user.waiting_for_a_game==True:
+            my_games = current_user.games
+            return str(my_games[len(my_games)-1].id)
+        for other_user in users:
+            if not other_user == current_user:
+                new_game = Game()
+                new_game.users.append(current_user)
+                new_game.users.append(other_user)
+                other_user.waiting_for_a_game=False
+                db.session.add(other_user)
+                db.session.add(new_game)
+                db.session.commit()
+                return str(new_game.id)
+        time.sleep(3)
+        counter += 1
+        if counter > 22:
+            return None
+
 #     passed_in_turns = request.args.get("otherTurns")
 #     game_id = request.args.get("gameId")
-#     game = Game.query.get(game_id)
-#     other_user = get_other_user(game)
-#     other_user_turns = get_turns(game, other_user)
-#     numOfTurns = str(len(other_user_turns))
-#     return numOfTurns
+#     print("Passed in:" + str(passed_in_turns))
+#     counter = 0
+#     while True:
+#         time.sleep(3)
+#         counter += 1
+#         db.session.commit() #need to run this to get real time data from db for some reason
+#         game = Game.query.get(game_id)
+#         other_user = get_other_user(game)
+#         other_user_turns = get_turns(game, other_user)
+#         numOfTurns = str(len(other_user_turns))
+#         #if there is a change or a minute has passed return the number
+#         if not numOfTurns == passed_in_turns or counter > 20:
+#             return numOfTurns
+
 
 ###################### DATA RETRIEVING VIEWS ##################################
 
@@ -283,6 +357,8 @@ def check_email_existing(email_input):
 def user_level_info(user):
     level_info = {
         "xp_to_level": calculate_xp_to_level(user),
+        "prev_mark": get_level_marks()[calculate_level(user.xp)+1],
+        "next_mark": get_level_marks()[calculate_level(user.xp)+1],
         "level" : calculate_level(user.xp)
     }
     return level_info

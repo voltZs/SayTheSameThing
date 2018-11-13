@@ -1,0 +1,12 @@
+{% extends "withsidebar.html" %}
+
+{% block meta_title %}
+  Waiting to Connect- Say The Same Thing
+{% endblock %}
+
+
+{% block page_content %}
+  <h2 class="textAlignMiddle">Please wait while we connect you to an opponent.</h2>
+  <h1 class="textAlignMiddle" id="loadingDots">...</h1>
+  <script src="{{url_for('static', filename='javascript/game_connecting.js')}}"></script>
+{% endblock %}

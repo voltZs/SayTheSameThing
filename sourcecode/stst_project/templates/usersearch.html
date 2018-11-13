@@ -11,15 +11,50 @@
     <input type="text" name="searchWord" value="" placeholder="Username or e-mail address">
   </form>
   {% if search_results %}
-  <h3>Results:</h3>
+    <br>
     {% for user in search_results %}
-      {{user.username}} {{user.email}} <br>
+      <div class="resultItem ">
+        <a href="/user/{{user.username}}">
+          <div class="resultItemButton resultItemUser compWhite">
+            {{user.username}}
+          </div>
+        </a>
+        {% if not current_user == user %}
+        <a href="/start_game/{{user.username}}">
+          <div class="resultItemButton compDark">
+            Start Game
+          </div>
+        </a>
+        <a href="/user/{{user.username}}/add_buddy">
+          <div class="resultItemButton compDark">
+            Add
+          </div>
+        </a>
+        {% endif %}
+      </div>
     {% endfor %}
   {% endif %}
 
   <h3>New users:</h3>
   {% for user in recent_users %}
-    {{user.username}} {{user.email}} <br>
+    <div class="resultItem ">
+      <a href="/user/{{user.username}}">
+        <div class="resultItemButton resultItemUser compWhite ">
+          {{user.username}}
+        </div>
+      </a>
+      {% if not current_user == user %}
+      <a href="/start_game/{{user.username}}">
+        <div class="resultItemButton compDark">
+          Start Game
+        </div>
+      </a>
+      <a href="/user/{{user.username}}/add_buddy">
+        <div class="resultItemButton compDark">
+          Add
+        </div>
+      </a>
+      {% endif %}
+    </div>
   {% endfor %}
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 {% endblock %}

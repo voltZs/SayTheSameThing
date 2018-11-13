@@ -14,6 +14,14 @@
       <div class="inputDiv">
         Sign up with an account
       </div>
+      <div class="inputDiv" >
+        <img src=
+        "/static/avatars/{% if prev_form %}{{prev_form['avatar']}}{% else %}0{% endif %}.png"
+        class="previewAvatar" alt="" width="120" height="120">
+        <input type="hidden" name="avatar" value=
+        "{% if prev_form: %}{{prev_form['avatar']}}{% else %}0{% endif %}"
+        id="registerAvatar">
+      </div>
       <div class="inputDiv">
         <input type="text" name="username" value=
         "{% if prev_form: %}{{prev_form['username']}}{% endif %}"
@@ -30,9 +38,39 @@
         "{% if prev_form: %}{{prev_form['email']}}{% endif %}"
         placeholder="E-mail address" required>
       </div>
-      <div class="inputDiv">
+      <div class="inputDiv ">
         <input type="submit">
       </div>
     </form>
   </div>
+
+{% endblock %}
+
+{% block body_end%}
+  <div class="floatContainer compWhite hidden" id="floatContainer">
+    <div class="turnBubble floatContBubble compDark">Pick an avatar</div>
+    <div class="avatarGrid">
+      {% for x in  range(0, 18) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick" alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+    <div class="avatarBreak">
+
+    </div>
+    <div class="avatarGrid">
+      {% for x in  range(18, 42) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick" alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+    <div class="avatarBreak">
+
+    </div>
+    <div class="avatarGrid">
+      {% for x in  range(42, 54) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick"  alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+  </div>
+
+  <script src="{{url_for('static', filename='javascript/change_avatar.js')}}"></script>
 {% endblock %}
