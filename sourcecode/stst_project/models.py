@@ -37,6 +37,7 @@ class User(db.Model, UserMixin):
     turns = db.relationship('Turn', backref='user', lazy=True)
     retrieved_from_games = db.relationship('Game', secondary='point_retrieval', lazy='subquery', backref=db.backref('point_retrievers', lazy=True))
     waiting_for_a_game = db.Column(db.Boolean, nullable=False, default=False)
+    notifications = db.relationship('Notification', backref='user', lazy=True)
     buddies = db.relationship('User', secondary= buddies,
         primaryjoin = (buddies.c.user_id == id),
         secondaryjoin = (buddies.c.buddy_id == id),
@@ -58,11 +59,21 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return "User: " + self.username
 
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    viewed = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    game = db.relationship('Game', backref='notification', uselist=False, lazy=True)
+
+    def __repr__(self):
+        return "Notification for game " + str(self.game.id) + " sent to user: " + str(self.user.username)
+
 
 class Game(db.Model):
     id= db.Column(db.Integer, primary_key=True)
     won = db.Column(db.Boolean, nullable=False, default=False)
     turns = db.relationship('Turn', backref='game', lazy=True)
+    notification_id = db.Column(db.Integer, db.ForeignKey('notification.id'))
 
     def __repr__(self):
         return "Game ID: " + str(self.id)

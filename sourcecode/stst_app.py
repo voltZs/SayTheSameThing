@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, redirect, abort, flash, session, url_for, jsonify
 from stst_project import app, db
-from stst_project.models import User, Game, Turn
+from stst_project.models import User, Game, Turn, Notification
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -11,7 +11,9 @@ db.create_all()
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    curr_user_leveling = user_level_info(current_user)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('home.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/register')
 def register():
@@ -79,13 +81,15 @@ def logout():
 @login_required
 def welcome():
     curr_user_leveling = user_level_info(current_user)
-    return render_template('welcome.html', curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('welcome.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/user_settings')
 @login_required
 def user_me():
     curr_user_leveling = user_level_info(current_user)
-    return render_template('usersettings.html', curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('usersettings.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/games')
 @login_required
@@ -102,7 +106,8 @@ def my_games():
                 current_games.append(create_game_dict(game))
 
     curr_user_leveling = user_level_info(current_user)
-    return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/buddies')
 @login_required
@@ -110,7 +115,8 @@ def my_buddies():
     buddies = current_user.buddies
 
     curr_user_leveling = user_level_info(current_user)
-    return render_template('mybuddies.html', curr_user_leveling=curr_user_leveling, buddies=buddies)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('mybuddies.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications, buddies=buddies)
 
 
 @app.route('/users')
@@ -136,7 +142,8 @@ def user_search():
             recent_users.append(tuple[0])
 
     curr_user_leveling = user_level_info(current_user)
-    return render_template('usersearch.html', search_results=search_results, recent_users=recent_users, curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('usersearch.html', search_results=search_results, recent_users=recent_users, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 
 @app.route('/user/<username>')
@@ -146,7 +153,8 @@ def user_page(username):
     if user == None:
         return abort(404, 'This user does not exist or has been deleted.')
     curr_user_leveling = user_level_info(current_user)
-    return render_template('userpage.html', user=user, curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('userpage.html', user=user, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/user/<username>/add_buddy')
 @login_required
@@ -187,7 +195,8 @@ def play_random():
     db.session.add(current_user)
     db.session.commit()
     curr_user_leveling = user_level_info(current_user)
-    return render_template('gamewait.html', curr_user_leveling=curr_user_leveling)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('gamewait.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications, )
 
 @app.route('/start_game/<username>')
 @login_required
@@ -197,7 +206,12 @@ def start_game_with_user(username):
         new_game = Game()
         new_game.users.append(user)
         new_game.users.append(current_user)
+        notification = Notification()
+        notification.game = new_game
+        user.notifications.append(notification)
         db.session.add(new_game)
+        db.session.add(notification)
+        db.session.add(user)
         db.session.commit()
         return redirect(url_for('play', game_id=new_game.id))
     else:
@@ -228,6 +242,7 @@ def play(game_id):
                 db.session.add(game)
                 db.session.commit()
             curr_user_leveling = user_level_info(current_user)
+            new_notifications = get_unseen_notific(current_user.notifications)
             other_user_leveling = user_level_info(other_user)
 
             return render_template('game.html',
@@ -236,6 +251,7 @@ def play(game_id):
                                     other_user_leveling=other_user_leveling,
                                     other_user_turns=other_user_turns,
                                     curr_user_leveling=curr_user_leveling,
+                                    new_notifications=new_notifications,
                                     curr_user_turns=curr_user_turns,
                                     earnable_xp=earnable_xp,
                                     game_status=game_status,
@@ -272,6 +288,14 @@ def create_turn():
         return abort(404, "This game is finished"), 404
     else:
         return abort(404, "You cannot submit an answer when it's the opponent's turn"), 404
+
+@app.route('/clear_notifications', methods=["POST"])
+def clear_notifications():
+    for notification in current_user.notifications:
+        notification.viewed=True
+        db.session.add(notification)
+    db.session.commit()
+    return None
 
 ############################ POLLING ############################
 
@@ -317,6 +341,17 @@ def poll_waiting_users():
         if counter > 22:
             return None
 
+@app.route('/check_for_notifications')
+def poll_game_notifications():
+    # passed_in_num = int(request.args.get("numOfNotifications"))
+    # num_of_notifications = len(current_user.notifications)
+    new_notifications = []
+    for notification in get_unseen_notific(current_user.notifications):
+        new_notification = create_notific_dict(notification)
+        new_notifications.append(new_notification)
+    print(new_notifications)
+    return jsonify(new_notifications)
+
 ################################# ERRORS ##################################
 
 @app.errorhandler(404)
@@ -324,7 +359,8 @@ def page_not_found(error):
     curr_user_leveling = {}
     if current_user.is_authenticated:
         curr_user_leveling = user_level_info(current_user)
-    return render_template('err404.html', error_msg=error, curr_user_leveling=curr_user_leveling), 404
+        new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('err404.html', error_msg=error, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications), 404
 
 
 ####################   OTHER FUNCTIONS   ############################
@@ -450,6 +486,21 @@ def create_game_dict(game):
     if game.won:
         game_dict['status'] = 'STATUS_WON'
     return game_dict
+
+def create_notific_dict(notification):
+    notif_dict = {}
+    notif_dict['opponent'] = get_other_user(notification.game).username
+    notif_dict['game_id'] = notification.game.id
+    notif_dict['viewed'] = notification.viewed
+    return notif_dict
+
+def get_unseen_notific(notifications):
+    new_notifications = []
+    for item in notifications:
+        if item.viewed == False:
+            new_notifications.append(item)
+    return new_notifications
+
 
 if __name__ == '__main__':
     app.run(debug = True, threaded=True)

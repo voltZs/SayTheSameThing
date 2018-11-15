@@ -31,12 +31,18 @@
         </div>
       </a>
 
-      <a href="/user_settings">
-        <div class="navigbarItem navigbarItemRight">
-          {{current_user.username}}
-        </div>
-      </a>
+
+      <div class="navigbarItem navigbarItemRight" id="usernameNavigbar">
+        {% if new_notifications|length > 0 %}
+          <div id="notificationBlob"></div>
+        {% endif %}
+        {{current_user.username}}
+      </div>
+
+      <div id="data-div" data-gameid="{{game_id}}" data-newnotifications={{new_notifications|length}}></div>
+
       {% else %}
+
       <a href="/register">
         <div class="navigbarItem navigbarItemRight">
           Sign Up
@@ -49,12 +55,17 @@
         </div>
       </a>
       {% endif %}
-
-
-
-
-
     </div>
+
+
+    <div class="floatContainer compWhite hidden" id="floatNotification">
+    </div>
+
+
+    <script src="{{url_for('static', filename='javascript/change_avatar.js')}}"></script>
+
+
+
     <div class="mainContainer">
       <div class="topSpace"></div>
       {% with msgs = get_flashed_messages() %}
@@ -73,4 +84,5 @@
     {% endblock %}
   </body>
   <script src="{{url_for('static', filename='javascript/styling.js')}}"></script>
+  <script src="{{url_for('static', filename='javascript/polling_notifications.js')}}"></script>
 </html>
