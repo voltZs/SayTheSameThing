@@ -11,8 +11,11 @@ db.create_all()
 
 @app.route('/')
 def home():
-    curr_user_leveling = user_level_info(current_user)
-    new_notifications = get_unseen_notific(current_user.notifications)
+    curr_user_leveling = {}
+    new_notifications = {}
+    if current_user.is_authenticated:
+        curr_user_leveling = user_level_info(current_user)
+        new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('home.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/register')
@@ -163,7 +166,13 @@ def add_buddy(username):
     if new_buddy:
         if not new_buddy in current_user.buddies:
             current_user.buddies.append(new_buddy)
+            notification = Notification()
+            notification.content = str(current_user.username) + " added you as their buddy."
+            notification.link = "/user/" + current_user.username
+            new_buddy.notifications.append(notification)
             db.session.add(current_user)
+            db.session.add(notification)
+            db.session.add(new_buddy)
             db.session.commit()
         else:
             flash("This user is already your buddy")
@@ -206,9 +215,14 @@ def start_game_with_user(username):
         new_game = Game()
         new_game.users.append(user)
         new_game.users.append(current_user)
+        db.session.add(new_game)
+        db.session.commit()
+
         notification = Notification()
-        notification.game = new_game
+        notification.link = "/play/" + str(new_game.id)
+        notification.content = current_user.username + " started a new game with you."
         user.notifications.append(notification)
+
         db.session.add(new_game)
         db.session.add(notification)
         db.session.add(user)
@@ -295,7 +309,7 @@ def clear_notifications():
         notification.viewed=True
         db.session.add(notification)
     db.session.commit()
-    return None
+    return "Notifications cleared"
 
 ############################ POLLING ############################
 
@@ -341,16 +355,19 @@ def poll_waiting_users():
         if counter > 22:
             return None
 
-@app.route('/check_for_notifications')
-def poll_game_notifications():
-    # passed_in_num = int(request.args.get("numOfNotifications"))
-    # num_of_notifications = len(current_user.notifications)
-    new_notifications = []
-    for notification in get_unseen_notific(current_user.notifications):
+@app.route('/check_notifications')
+def poll_notifications():
+    passed_in_num = int(request.args.get("numOfNotifications"))
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return str(len(new_notifications))
+
+@app.route('/get_notifications')
+def get_notifications():
+    notifications = []
+    for notification in current_user.notifications:
         new_notification = create_notific_dict(notification)
-        new_notifications.append(new_notification)
-    print(new_notifications)
-    return jsonify(new_notifications)
+        notifications.append(new_notification)
+    return jsonify(notifications)
 
 ################################# ERRORS ##################################
 
@@ -489,8 +506,8 @@ def create_game_dict(game):
 
 def create_notific_dict(notification):
     notif_dict = {}
-    notif_dict['opponent'] = get_other_user(notification.game).username
-    notif_dict['game_id'] = notification.game.id
+    notif_dict['content'] = notification.content
+    notif_dict['link'] = notification.link
     notif_dict['viewed'] = notification.viewed
     return notif_dict
 

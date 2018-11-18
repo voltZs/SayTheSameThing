@@ -13,6 +13,13 @@ avatarPicks.forEach(function(avatarPick){
   })
 })
 
-myAvatar.addEventListener("click", function(){
+myAvatar.addEventListener("click", function(event){
   floatContainer.classList.toggle("hidden");
+  event.stopPropagation();
+})
+
+
+
+document.body.addEventListener("click", function(){
+  floatContainer.classList.add("hidden");
 })

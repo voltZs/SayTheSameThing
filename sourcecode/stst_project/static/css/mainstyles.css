@@ -207,8 +207,8 @@ body{
   font-size: 19px;
   padding: 5px 15px;
   text-align: center;
-  border-radius: 15px;
-  margin-bottom: 8px;
+  border-radius: 10px;
+  margin-bottom: 5px;
 }
 
 .turnBubble{

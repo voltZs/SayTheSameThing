@@ -33,9 +33,7 @@
 
 
       <div class="navigbarItem navigbarItemRight" id="usernameNavigbar">
-        {% if new_notifications|length > 0 %}
-          <div id="notificationBlob"></div>
-        {% endif %}
+          <div class="hidden" id="notificationBlob"></div>
         {{current_user.username}}
       </div>
 
@@ -62,10 +60,6 @@
     </div>
 
 
-    <script src="{{url_for('static', filename='javascript/change_avatar.js')}}"></script>
-
-
-
     <div class="mainContainer">
       <div class="topSpace"></div>
       {% with msgs = get_flashed_messages() %}
@@ -83,6 +77,5 @@
     {% block body_end %}
     {% endblock %}
   </body>
-  <script src="{{url_for('static', filename='javascript/styling.js')}}"></script>
   <script src="{{url_for('static', filename='javascript/polling_notifications.js')}}"></script>
 </html>

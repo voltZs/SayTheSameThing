@@ -1,56 +1,72 @@
 var floatWindow = document.getElementById("floatNotification");
 var userButton = document.getElementById("usernameNavigbar");
+var notificationBlob = document.getElementById("notificationBlob");
+// ///////////////////
 
-userButton.addEventListener("click", function(event){
-  floatWindow.classList.toggle("hidden");
-  event.stopPropagation();
-  $.post("/clear_notifications");
-  //code to make red blob disappear
-})
+var numOfNotifications = document.getElementById("data-div").getAttribute("data-newnotifications");
 
-document.body.addEventListener("click", function(){
-  floatWindow.classList.add("hidden");
-})
+if (numOfNotifications > 0) {
+  notificationBlob.classList.remove("hidden");
+}
 
+updateNotificationsPanel();
 checkNotifications();
-setInterval(checkNotifications, 20000);
+setInterval(checkNotifications, 5000);
 
 function checkNotifications() {
-
-  var numOfNotifications = document.getElementById("data-div").getAttribute("data-newnotifications");
-
   var passinData = {
     numOfNotifications : numOfNotifications
-  }
-
+  };
   var displayNotifications = [];
   $.ajax({
-      url:"/check_for_notifications",
+      url:"/check_notifications",
       data: passinData,
       timeout: 60000,
       success: function(data) {
-          // If a change occured to database, refresh, if it just timed out, poll again
+
+        var retrievedNum = parseInt(JSON.parse(data));
+
+        console.log(numOfNotifications);
+        console.log(retrievedNum);
+
+        if (numOfNotifications != retrievedNum) {
+          notificationBlob.classList.remove("hidden");
+          updateNotificationsPanel();
+          numOfNotifications = retrievedNum;
+        }
+       },
+      error: function(jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR.status + "," + textStatus + ", " + errorThrown);
+      }
+  });
+}
+
+function updateNotificationsPanel() {
+  var displayNotifications = [];
+  $.ajax({
+      url:"/get_notifications",
+      timeout: 60000,
+      success: function(data) {
           notifications = data;
+          floatWindow.innerHTML = "";
 
           if (notifications.length>0) {
-            floatWindow.innerHTML = "";
-
             for(var x = notifications.length-1; x>=0; x--){
-              var message = "";
-              message += notifications[x].opponent;
-              message += " started a new game with you"
-
               var notificationBubble = document.createElement("DIV");
               notificationBubble.classList.add("notificationBubble");
-              notificationBubble.classList.add("compOrange");
-              notificationBubble.textContent = message;
+              if(notifications[x].viewed){
+                  notificationBubble.classList.add("compOrange");
+              } else {
+                notificationBubble.classList.add("compDark");
+              }
+
+              notificationBubble.textContent = notifications[x].content.toString();
               var aTag = document.createElement("A");
-              aTag.setAttribute("href", "/play/"+ notifications[x].game_id.toString());
+              aTag.setAttribute("href", notifications[x].link.toString());
               aTag.appendChild(notificationBubble);
               floatWindow.appendChild(aTag);
             }
           } else {
-            floatWindow.innerHTML = "";
             var message = "No new notifications";
             var notificationBubble = document.createElement("DIV");
             notificationBubble.classList.add("notificationBubble");
@@ -65,5 +81,16 @@ function checkNotifications() {
           console.log(jqXHR.status + "," + textStatus + ", " + errorThrown);
       }
   });
-
 }
+
+userButton.addEventListener("click", function(event){
+  floatWindow.classList.toggle("hidden");
+  event.stopPropagation();
+  notificationBlob.classList.add("hidden");
+  $.post("/clear_notifications");
+  numOfNotifications = 0;
+})
+
+document.body.addEventListener("click", function(){
+  floatWindow.classList.add("hidden");
+})

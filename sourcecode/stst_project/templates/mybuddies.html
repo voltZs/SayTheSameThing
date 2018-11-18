@@ -34,6 +34,9 @@
             </td>
         </tr>
       {% endfor %}
+      {% if buddies|length == 0 %}
+        <h3 class=textAlignMiddle>You do not have any buddies yet. :(</h3>
+      {% endif %}
     </tbody>
   </table>
 {% endblock %}

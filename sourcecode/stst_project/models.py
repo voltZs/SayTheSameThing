@@ -63,7 +63,9 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     viewed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    game = db.relationship('Game', backref='notification', uselist=False, lazy=True)
+    # game = db.relationship('Game', backref='notification', uselist=False, lazy=True)
+    content = db.Column(db.String, nullable=False)
+    link = db.Column(db.String)
 
     def __repr__(self):
         return "Notification for game " + str(self.game.id) + " sent to user: " + str(self.user.username)
@@ -73,7 +75,7 @@ class Game(db.Model):
     id= db.Column(db.Integer, primary_key=True)
     won = db.Column(db.Boolean, nullable=False, default=False)
     turns = db.relationship('Turn', backref='game', lazy=True)
-    notification_id = db.Column(db.Integer, db.ForeignKey('notification.id'))
+    # notification_id = db.Column(db.Integer, db.ForeignKey('notification.id'))
 
     def __repr__(self):
         return "Game ID: " + str(self.id)
