@@ -479,7 +479,7 @@ def check_game_won(turns1, turns2):
             last_item1 = turns1[len(turns1)-1]['content']
         if turns2:
             last_item2 = turns2[len(turns2)-1]['content']
-        return last_item1.casefold() == last_item2.casefold()
+        return last_item1.lower() == last_item2.lower()
     return False
 
 def get_game_xp(rounds):
