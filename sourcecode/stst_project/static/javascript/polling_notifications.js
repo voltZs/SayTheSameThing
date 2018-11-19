@@ -23,12 +23,7 @@ function checkNotifications() {
       data: passinData,
       timeout: 60000,
       success: function(data) {
-
         var retrievedNum = parseInt(JSON.parse(data));
-
-        console.log(numOfNotifications);
-        console.log(retrievedNum);
-
         if (numOfNotifications != retrievedNum) {
           notificationBlob.classList.remove("hidden");
           updateNotificationsPanel();

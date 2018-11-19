@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from flask import Flask, request, render_template, redirect, abort, flash, session, url_for, jsonify
 from stst_project import app, db
 from stst_project.models import User, Game, Turn, Notification
