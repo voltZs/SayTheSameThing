@@ -1,10 +1,53 @@
-{% extends "withsidebar.html" %}
+{% extends "userpage.html" %}
 
 {% block meta_title %}
   {{current_user.username}} - Say The Same Thing
 {% endblock %}
 
+{% block profilecard_buttons %}
+  <form action="/change_avatar" id="avatarForm" method="post">
+    <input type="hidden" id="registerAvatar" name="avatar" value="{{current_user.avatar}}">
+  </form>
+  <div class="resultItemButton compDark hidden" id="saveButton">
+    Save changes
+  </div>
+{% endblock %}
 
-{% block page_content %}
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% block users_bottom_panel %}
+
+  <h3>User options</h3>
+  <form action="/delete_account">
+    <input type="submit" value="Delete Account" class="compDark">
+  </form>
+  </script>
+
+{% endblock %}
+
+{% block body_end%}
+  <div class="floatContainer compWhite floatingShadow hidden" id="floatContainer">
+    <div class="turnBubble floatContBubble compDark">Pick an avatar</div>
+    <div class="avatarGrid">
+      {% for x in  range(0, 18) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick" alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+    <div class="avatarBreak">
+
+    </div>
+    <div class="avatarGrid">
+      {% for x in  range(18, 42) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick" alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+    <div class="avatarBreak">
+
+    </div>
+    <div class="avatarGrid">
+      {% for x in  range(42, 54) %}
+      <img src="{{url_for('static', filename= 'avatars/'+ (x+1)|string +'.png')}}" avatar-num="{{x+1}}" class="avatarPick"  alt="" width="80" height="80">
+      {% endfor %}
+    </div>
+  </div>
+
+  <script src="{{url_for('static', filename='javascript/change_avatar.js')}}"></script>
 {% endblock %}

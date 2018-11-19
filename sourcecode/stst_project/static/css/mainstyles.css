@@ -95,7 +95,7 @@ body{
 
 .containerBubble{
   position: relative;
-  min-height: 360px;
+  min-height: 220px;
   margin-top: 8px;
   padding: 30px;
   border-radius: 35px;
@@ -250,6 +250,18 @@ body{
   background-color: rgb(255, 243, 232);
 }
 
+.compHighligh{
+  background-color: rgba(255,255,255, 0.3);
+}
+
+.compHighlighStrong{
+  background-color: rgba(255,255,255, 0.8);
+}
+
+.floatingShadow{
+  box-shadow: 0 0 25px rgba(0,0,0,0.2);
+}
+
 .bubblecomp1right{
 
   position: absolute;
@@ -364,14 +376,19 @@ body{
   display: inline-block;
   position: relative;
   width: 50%;
-  background-color: rgb(255, 155, 68);
   height: 9px;
   border-radius: 4px;
 }
 
+div.levelBarThick{
+  height: 15px;
+  border-radius: 7px;
+}
+
 .levelBarFill{
   position: absolute;
-  background-color: rgb(255, 243, 232);
+  left:0;
+  top:0;
   height: 9px;
   border-radius: 4px;
 }
@@ -391,7 +408,10 @@ body{
   padding: 5px 15px;
   border-radius: 8px;
   display: inline-block;
-  margin-left: 5px;
+}
+
+.resultItemButton:hover{
+  cursor: pointer;
 }
 
 .floatContainer{
@@ -412,7 +432,7 @@ body{
 .avatarPick:hover{
   cursor: pointer;
 }
-.previewAvatar:hover{
+#previewAvatar:hover{
   cursor: pointer;
 }
 
@@ -420,6 +440,49 @@ body{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+}
+
+.profileCard{
+  position: relative;
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+.profileCardLeft{
+}
+
+.profileCardRight{
+  padding: 0 20px;
+  flex-grow: 1;
+}
+
+.profileCardUsername{
+  margin: 5px 0;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.profileCardLeveling{
+  margin: 5px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profileCardButtonsPanel{
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+}
+
+.XPindicator{
+  position: absolute;
+  font-size: 13px;
+  left:50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .floatContBubble{
@@ -441,8 +504,24 @@ a{
   text-decoration: none;
   color: black;
 }
-table{width: 100%;}
+table{
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 20px;
+}
+tr{
+  padding: 5px 0;
+  border-radius: 10px;
+}
+
 td{text-align: center;}
+
+td:first-of-type{
+  padding-right: 20px;
+}
+th:first-of-type{
+  padding-right: 20px;
+}
 
 form{
   width:100%;

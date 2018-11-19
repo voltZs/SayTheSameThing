@@ -89,13 +89,6 @@ def welcome():
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('welcome.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
-@app.route('/user_settings')
-@login_required
-def user_me():
-    curr_user_leveling = user_level_info(current_user)
-    new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('usersettings.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
-
 @app.route('/games')
 @login_required
 def my_games():
@@ -150,16 +143,31 @@ def user_search():
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('usersearch.html', search_results=search_results, recent_users=recent_users, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
+@app.route('/user_settings')
+@login_required
+def user_me():
+    user = current_user
+    user_leveling = user_level_info(current_user)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('usersettings.html', user=user, user_leveling=user_leveling, curr_user_leveling=user_leveling, new_notifications=new_notifications)
+
 
 @app.route('/user/<username>')
 @login_required
 def user_page(username):
+    if username == current_user.username:
+        return redirect(url_for('user_me'))
     user = User.query.filter_by(username=username).first()
     if user == None:
         return abort(404, 'This user does not exist or has been deleted.')
+    user_leveling = user_level_info(user)
+    games = []
+    for game in user.games:
+        if current_user in game.users:
+            games.append(create_game_dict(game))
     curr_user_leveling = user_level_info(current_user)
     new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('userpage.html', user=user, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
+    return render_template('userpage.html', user=user, games=games, user_leveling=user_leveling, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/user/<username>/add_buddy')
 @login_required
@@ -313,6 +321,20 @@ def clear_notifications():
     db.session.commit()
     return "Notifications cleared"
 
+@app.route('/change_avatar', methods=["POST"])
+def change_avatar():
+    new_avatar = request.form['avatar']
+    current_user.avatar = new_avatar
+    db.session.add(current_user)
+    db.session.commit()
+    return redirect(url_for('user_me'))
+
+@app.route('/delete_account')
+def delete_account():
+    db.session.delete(current_user)
+    db.session.commit()
+    return redirect(url_for('home'))
+
 ############################ POLLING ############################
 
 @app.route('/poll')
@@ -334,12 +356,13 @@ def poll_game():
 
 @app.route('/find_waiting_user')
 def poll_waiting_users():
+    db.session.commit()
     users = User.query.filter_by(waiting_for_a_game=True)
     counter = 0
     # check if I am still waiting for a game if yes look for others who are too
     while True:
         db.session.commit()
-        if not current_user.waiting_for_a_game==True:
+        if current_user.waiting_for_a_game==False:
             my_games = current_user.games
             return str(my_games[len(my_games)-1].id)
         for other_user in users:
@@ -348,7 +371,9 @@ def poll_waiting_users():
                 new_game.users.append(current_user)
                 new_game.users.append(other_user)
                 other_user.waiting_for_a_game=False
+                current_user.waiting_for_a_game=False
                 db.session.add(other_user)
+                db.session.add(current_user)
                 db.session.add(new_game)
                 db.session.commit()
                 return str(new_game.id)
@@ -395,7 +420,7 @@ def check_email_existing(email_input):
 def user_level_info(user):
     level_info = {
         "xp_to_level": calculate_xp_to_level(user),
-        "prev_mark": get_level_marks()[calculate_level(user.xp)+1],
+        "prev_mark": get_level_marks()[calculate_level(user.xp)],
         "next_mark": get_level_marks()[calculate_level(user.xp)+1],
         "level" : calculate_level(user.xp)
     }

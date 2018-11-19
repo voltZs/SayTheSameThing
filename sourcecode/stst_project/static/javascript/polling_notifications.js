@@ -50,9 +50,9 @@ function updateNotificationsPanel() {
               var notificationBubble = document.createElement("DIV");
               notificationBubble.classList.add("notificationBubble");
               if(notifications[x].viewed){
-                  notificationBubble.classList.add("compOrange");
+                  notificationBubble.classList.add("compHighligh");
               } else {
-                notificationBubble.classList.add("compDark");
+                notificationBubble.classList.add("compHighlighStrong");
               }
 
               notificationBubble.textContent = notifications[x].content.toString();
@@ -84,7 +84,7 @@ userButton.addEventListener("click", function(event){
   notificationBlob.classList.add("hidden");
   $.post("/clear_notifications");
   numOfNotifications = 0;
-})
+});
 
 document.body.addEventListener("click", function(){
   floatWindow.classList.add("hidden");

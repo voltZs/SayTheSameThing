@@ -7,7 +7,8 @@
 
 {% block page_content %}
   <h2 class="textAlignMiddle">My buddies</h2>
-  <table>
+  {% if buddies|length > 0 %}
+  <table class="compHighligh">
     <tbody>
       {% for buddy in buddies %}
         <tr>
@@ -34,9 +35,9 @@
             </td>
         </tr>
       {% endfor %}
-      {% if buddies|length == 0 %}
-        <h3 class=textAlignMiddle>You do not have any buddies yet. :(</h3>
-      {% endif %}
     </tbody>
   </table>
+  {% else %}
+    <h3 class=textAlignMiddle>You do not have any buddies yet. :(</h3>
+  {% endif %}
 {% endblock %}

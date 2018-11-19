@@ -4,21 +4,115 @@
   {{user.username}} - Say The Same Thing
 {% endblock %}
 
-{% block in_head %}
-  <!-- IF THE USER IS ME REDIRECT TO MY PROFILE -->
-  {% if user == current_user %}
-    <script>
-      window.location.href = "{{url_for('user_me')}}"
-    </script>
-  {% endif %}
-{% endblock %}
 
 {% block page_content %}
-  <div>{{user.username}}</div>
-  {{user.avatar}}
-  {{user.xp}}
-  {{curr_user_leveling}}
+  <style>
+    @keyframes barGrow{
+      0% {width: 0%}
+      100% {width: {{user_leveling.xp_to_level*100}}%}
+    }
+    #userBarFill{width: {{user_leveling.xp_to_level*100}}%;
+                animation-name: barGrow;
+                animation-duration: 0.8s}
+  </style>
 
+  <div class="profileCard compHighligh">
 
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <div class="profileCardLeft">
+      <img src="{{url_for('static', filename= 'avatars/'+ user.avatar|string +'.png')}}" id="previewAvatar" alt="" width="120" height="120">
+    </div>
+
+    <div class="profileCardRight">
+      <div class="profileCardUsername">
+        {{user.username}}
+      </div>
+      <div class="profileCardLeveling">
+        <div class="levelHolder">
+          Lvl {{user_leveling.level}}
+        </div>
+        <div class="levelBar levelBarThick compDark">
+          <div class="levelBarFill levelBarThick compWhite" id="userBarFill"></div>
+          <div class="XPindicator">
+            {{user.xp-user_leveling.prev_mark}}/{{user_leveling.next_mark}}
+          </div>
+        </div>
+      </div>
+      <div class="profileCardLeveling">
+        XP: {{user.xp}}
+      </div>
+
+      <div class="profileCardButtonsPanel">
+      {% block profilecard_buttons %}
+        {% if not current_user == user %}
+        <a href="/start_game/{{user.username}}">
+          <div class="resultItemButton compDark">
+            Start Game
+          </div>
+        </a>
+        {% if not user in current_user.buddies %}
+        <a href="/user/{{user.username}}/add_buddy">
+          <div class="resultItemButton compDark">
+            Add
+          </div>
+        </a>
+        {% else %}
+        <a href="/user/{{user.username}}/remove_buddy">
+          <div class="resultItemButton compDark">
+            Remove
+          </div>
+        </a>
+
+        {% endif %}
+        {% endif %}
+      {% endblock %}
+      </div>
+    </div>
+  </div>
+
+  {% block users_bottom_panel %}
+    <h3>Games with user</h3>
+    {% if games|length >0 %}
+      <table class="compHighligh">
+        <tbody>
+          <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Turns</th>
+          </tr>
+          {% for game in games %}
+          <tr>
+            <td>
+              <a href="/play/{{game['id']}}">
+                <div class="resultItemButton compWhite">
+                  #{{game.id}}
+                </div>
+                </a>
+            </td>
+            <td>
+              <a href="/play/{{game['id']}}">
+                <div class="resultItemButton compDark">
+                  {% if game['status'] == "STATUS_GO" %}
+                  Ready
+                  {% elif game['status'] == "STATUS_WON" %}
+                  Finished
+                  {% elif game['status'] == "STATUS_WAIT" %}
+                  Waiting
+                  {% endif %}
+                </div>
+                </a>
+            </td>
+            <td>
+              <a href="/play/{{game['id']}}">
+                <div class="resultItemButton compDark">
+                  {{game['turns']}}
+                </div>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+      </table>
+    {% else %}
+    <h4 class="textAlignMiddle">No games with user</h4>
+    {% endif %}
+  {% endblock %}
 {% endblock %}

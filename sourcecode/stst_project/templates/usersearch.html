@@ -11,7 +11,8 @@
     <input type="text" name="searchWord" value="" placeholder="Username or e-mail address">
   </form>
   <br>
-  <table>
+  {% if search_results|length > 0 %}
+  <table class="compHighligh">
     <tbody>
       {% for user in search_results %}
         <tr>
@@ -52,11 +53,12 @@
       {% endfor %}
     </tbody>
   </table>
+  {% endif %}
 
 
-
+  {% if recent_users|length>0 %}
   <h3>New users:</h3>
-  <table>
+  <table class="compHighligh">
     <tbody>
       {% for user in recent_users %}
         <tr>
@@ -92,9 +94,14 @@
                 </a>
               </td>
               {% endif %}
+            {% else %}
+              <td colspan="2">
+                This is you
+              </td>
             {% endif %}
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  {% endif %}
 {% endblock %}
