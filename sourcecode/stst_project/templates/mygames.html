@@ -7,9 +7,12 @@
 
 {% block page_content %}
   <h2 class="textAlignMiddle">My Games</h2>
+  <i class="fas fa-edit fa-lg editIcon" id="editButton"></i>
   <h3>Current games</h3>
+
   {% if current_games|length >0 %}
-    <table class="compHighligh">
+  <div class="tableHolder compHighligh">
+    <table>
       <tbody>
         <tr>
           <th>Opponent</th>
@@ -45,18 +48,23 @@
                 {{game['turns']}}
               </div>
             </a>
+            <a href="/play/{{game['id']}}/remove">
+              <i class="fas fa-times fa-lg tdRemove hidden"></i>
+            </a>
           </td>
         </tr>
         {% endfor %}
     </table>
+  </div>
   {% else %}
   <h3 class="textAlignMiddle"> No current games</h3>
   {% endif %}
 
 
   <h3>Finished games</h3>
-  {% if current_games|length >0 %}
-    <table class="compHighligh">
+  {% if finished_games|length >0 %}
+  <div class="tableHolder compHighligh">
+    <table>
       <tbody>
         <tr>
           <th>Opponent</th>
@@ -92,11 +100,16 @@
                 {{game['turns']}}
               </div>
             </a>
+            <a href="/play/{{game['id']}}/remove?next=/games">
+              <i class="fas fa-times fa-lg tdRemove hidden"></i>
+            </a>
           </td>
         </tr>
         {% endfor %}
     </table>
+  </div>
   {% else %}
   <h3 class="textAlignMiddle"> No finished games</h3>
   {% endif %}
+  <script src="{{url_for('static', filename='javascript/deletegames.js')}}"></script>
 {% endblock %}

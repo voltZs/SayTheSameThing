@@ -95,6 +95,7 @@ def my_games():
             else:
                 current_games.append(create_game_dict(game))
 
+
     curr_user_leveling = user_level_info(current_user)
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
@@ -117,7 +118,8 @@ def user_search():
         results_by_name = User.query.filter_by(username=request.args.get('searchWord'))
         results_by_email = User.query.filter_by(username=request.args.get('searchWord'))
 
-        search_results = results_by_name
+        for result in results_by_name:
+            search_results.append(result)
         for e_result in results_by_email:
             if not e_result in search_results:
                 results.append(e-result)
@@ -130,7 +132,7 @@ def user_search():
     for tuple in tuples:
         if len(recent_users)<10:
             recent_users.append(tuple[0])
-
+    print(search_results)
     curr_user_leveling = user_level_info(current_user)
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('usersearch.html', search_results=search_results, recent_users=recent_users, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
@@ -222,6 +224,10 @@ def remove_buddy(username):
             return redirect('/user/'+username)
     else:
         return abort(404, "The user you are trying to remove from buddies was not found")
+
+    next = request.args.get('next')
+    if next:
+        return redirect(next)
     return redirect(url_for('my_buddies'))
 
 @app.route('/play_random')
@@ -301,6 +307,20 @@ def play(game_id):
             return abort(404, 'You do not have access to this game.'), 404
     else:
         return abort(404, 'This game does not exist or has been deleted'), 404
+
+@app.route('/play/<game_id>/remove')
+@login_required
+def delete_game(game_id):
+    game = Game.query.get(game_id)
+    if not game in current_user.games:
+        abort(404, "Yu are not authorised to delete this game.")
+    db.session.delete(game)
+    db.session.commit()
+    next = request.args.get('next')
+    if next:
+        return redirect(next)
+    return redirect(url_for('my_games'))
+
 
 @app.route('/submit_answer')
 @login_required

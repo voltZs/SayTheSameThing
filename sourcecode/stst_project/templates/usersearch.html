@@ -11,97 +11,101 @@
     <input type="text" name="searchWord" value="" placeholder="Username or e-mail address">
   </form>
   <br>
-  {% if search_results|length > 0 %}
-  <table class="compHighligh">
-    <tbody>
-      {% for user in search_results %}
-        <tr>
-            <td>
-              <a href="/user/{{user.username}}">
-                <div class="resultItemButton resultItemUser compWhite">
-                  {{user.username}}
-                </div>
-              </a>
-            </td>
-            {% if not current_user == user %}
+  {% if search_results|length > 0%}
+  <div class="tableHolder compHighligh">
+    <table>
+      <tbody>
+        {% for user in search_results %}
+          <tr>
               <td>
-                <a href="/start_game/{{user.username}}">
-                  <div class="resultItemButton compDark">
-                    Start Game
+                <a href="/user/{{user.username}}">
+                  <div class="resultItemButton resultItemUser compWhite">
+                    {{user.username}}
                   </div>
                 </a>
               </td>
-              {% if not user in current_user.buddies %}
-              <td>
-                <a href="/user/{{user.username}}/add_buddy">
-                  <div class="resultItemButton compDark">
-                    Add
-                  </div>
-                </a>
-              </td>
-              {% else %}
-              <td>
-                <a href="/user/{{user.username}}/remove_buddy">
-                  <div class="resultItemButton compDark">
-                    Remove
-                  </div>
-                </a>
-              </td>
+              {% if not current_user == user %}
+                <td>
+                  <a href="/start_game/{{user.username}}">
+                    <div class="resultItemButton compDark">
+                      Start Game
+                    </div>
+                  </a>
+                </td>
+                {% if not user in current_user.buddies %}
+                <td>
+                  <a href="/user/{{user.username}}/add_buddy">
+                    <div class="resultItemButton compDark">
+                      Add
+                    </div>
+                  </a>
+                </td>
+                {% else %}
+                <td>
+                  <a href="/user/{{user.username}}/remove_buddy">
+                    <div class="resultItemButton compDark">
+                      Remove
+                    </div>
+                  </a>
+                </td>
+                {% endif %}
               {% endif %}
-            {% endif %}
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% endif %}
 
 
   {% if recent_users|length>0 %}
   <h3>New users:</h3>
-  <table class="compHighligh">
-    <tbody>
-      {% for user in recent_users %}
-        <tr>
-            <td>
-              <a href="/user/{{user.username}}">
-                <div class="resultItemButton resultItemUser compWhite">
-                  {{user.username}}
-                </div>
-              </a>
-            </td>
-            {% if not current_user == user %}
+  <div class="tableHolder compHighligh">
+    <table>
+      <tbody>
+        {% for user in recent_users %}
+          <tr>
               <td>
-                <a href="/start_game/{{user.username}}">
-                  <div class="resultItemButton compDark">
-                    Start Game
+                <a href="/user/{{user.username}}">
+                  <div class="resultItemButton resultItemUser compWhite">
+                    {{user.username}}
                   </div>
                 </a>
               </td>
-              {% if not user in current_user.buddies %}
-              <td>
-                <a href="/user/{{user.username}}/add_buddy">
-                  <div class="resultItemButton compDark">
-                    Add
-                  </div>
-                </a>
-              </td>
+              {% if not current_user == user %}
+                <td>
+                  <a href="/start_game/{{user.username}}">
+                    <div class="resultItemButton compDark">
+                      Start Game
+                    </div>
+                  </a>
+                </td>
+                {% if not user in current_user.buddies %}
+                <td>
+                  <a href="/user/{{user.username}}/add_buddy">
+                    <div class="resultItemButton compDark">
+                      Add
+                    </div>
+                  </a>
+                </td>
+                {% else %}
+                <td>
+                  <a href="/user/{{user.username}}/remove_buddy">
+                    <div class="resultItemButton compDark">
+                      Remove
+                    </div>
+                  </a>
+                </td>
+                {% endif %}
               {% else %}
-              <td>
-                <a href="/user/{{user.username}}/remove_buddy">
-                  <div class="resultItemButton compDark">
-                    Remove
-                  </div>
-                </a>
-              </td>
+                <td colspan="2">
+                  This is you
+                </td>
               {% endif %}
-            {% else %}
-              <td colspan="2">
-                This is you
-              </td>
-            {% endif %}
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% endif %}
 {% endblock %}

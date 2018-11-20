@@ -502,7 +502,7 @@ div.levelBarThick{
 
 
 .hidden{
-  display: none;
+  display: none !important;
 }
 
 a{
@@ -513,6 +513,9 @@ a{
 
 table{
   margin: 0 auto;
+}
+
+.tableHolder{
   padding: 10px 20px;
   border-radius: 20px;
 }
@@ -522,7 +525,30 @@ tr{
   border-radius: 10px;
 }
 
-td{text-align: center;}
+td{
+  text-align: center;
+  position: relative;
+}
+
+.tdRemove{
+  position: absolute;
+  display: inline-block;
+  right: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: black;
+}
+.tdRemove:hover{
+  cursor: pointer
+}
+.editIcon{
+  position: absolute;
+  right: 25px;
+  transform: translateY(-250%);
+}
+.editIcon:hover{
+  cursor: pointer;
+}
 
 td:first-of-type{
   padding-right: 20px;
