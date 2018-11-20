@@ -510,11 +510,13 @@ a{
   text-decoration: none;
   color: black;
 }
+
 table{
   margin: 0 auto;
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 20px;
 }
+
 tr{
   padding: 5px 0;
   border-radius: 10px;
@@ -525,6 +527,7 @@ td{text-align: center;}
 td:first-of-type{
   padding-right: 20px;
 }
+
 th:first-of-type{
   padding-right: 20px;
 }
@@ -536,6 +539,7 @@ form{
   font-weight: bold;
   font-size: 20px;
 }
+
 .inputDiv{
   width: 100%;
   text-align: center;
@@ -547,6 +551,7 @@ input{
   height: 24px;
   width: 80%;
   margin: 0 3px;
+  padding: 3px 0;
   border-radius: 5px;
   border-style: none;
   outline: none;
@@ -561,6 +566,18 @@ input[type="submit"]{
 }
 input[type="submit"]:hover{
   cursor: pointer;
+}
+
+.submitButtonImitation{
+  text-align: center;
+  font-size: 17px;
+  height: 24px;
+  width: 80%;
+  padding-top: 3px ;
+  margin: 10px auto;
+  border-radius: 5px;
+  font-weight: bold;
+  width: 40%;
 }
 
 .textAlignMiddle{

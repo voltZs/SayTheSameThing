@@ -56,6 +56,9 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hashed, password)
 
+    def change_password(self, password):
+        self.password_hashed = generate_password_hash(password)
+
     def __repr__(self):
         return "User: " + self.username
 

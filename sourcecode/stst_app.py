@@ -10,14 +10,14 @@ import time
 
 db.create_all()
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.args:
-        avatar = request.args.get('avatar')
-        username = request.args.get('username')
-        password = request.args.get('password')
-        password_conf = request.args.get('password_conf')
-        email = request.args.get('email')
+    if request.method == 'POST':
+        avatar = request.form['avatar']
+        username = request.form['username']
+        password = request.form['password']
+        password_conf = request.form['password_conf']
+        email = request.form['email']
         session['prev_form'] = {'username' : username, 'email': email, 'avatar': avatar}
 
         # make sure all necessary args are not none
@@ -70,7 +70,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('welcome'))
 
 @app.route('/')
 def welcome():
@@ -143,6 +143,31 @@ def user_me():
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('usersettings.html', user=user, user_leveling=user_leveling, curr_user_leveling=user_leveling, new_notifications=new_notifications)
 
+@app.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        old_password = request.form['old_password']
+        new_password = request.form['password']
+        confirm_password = request.form['password_conf']
+
+        if old_password == None or new_password == None or confirm_password == None:
+            flash("Please fill in all necessary fields")
+            return redirect(url_for('change_password'))
+        if not current_user.check_password(old_password):
+            flash("The password you entered was incorrect")
+            return redirect(url_for('change_password'))
+        if not new_password == confirm_password:
+            flash("Your passwords were not matching")
+            return redirect(url_for('change_password'))
+        current_user.change_password(new_password)
+        db.session.add(current_user)
+        db.session.commit()
+        return redirect(url_for("user_me"))
+
+    curr_user_leveling = user_level_info(current_user)
+    new_notifications = get_unseen_notific(current_user.notifications)
+    return render_template('changepassword.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/user/<username>')
 @login_required
@@ -327,7 +352,7 @@ def delete_account():
         db.session.delete(game)
     db.session.delete(current_user)
     db.session.commit()
-    return redirect(url_for('home'))
+    return redirect(url_for('welcome'))
 
 ############################ POLLING ############################
 
