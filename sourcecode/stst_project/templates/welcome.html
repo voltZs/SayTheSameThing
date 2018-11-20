@@ -6,5 +6,35 @@
 
 
 {% block page_content %}
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  {% if not current_user.is_authenticated %}
+  <script>
+    document.getElementsByClassName("pageContainer")[0].style.width = "100%";
+  </script>
+  {% endif %}
+
+  <h1 class="textAlignMiddle">Say the Same Thing</h1>
+
+  <h3 class="textAlignMiddle">The rules are simple. You say the same thing.</h3>
+  <div class="bubble compHighligh textJustify">
+    Say the same thing is a turn based game. At first, each player says a
+    random word. If you don't say the same thing, think what connects these two
+    words and say this at your next turn. The game goes on until both of you
+    say the same word.
+  </div>
+
+
+  <h3 class="textAlignMiddle">It is good practice to try and avoid words you've already said!</h3>
+
+  <div class="bubble compHighligh textJustify">
+    Say the same thing is a game and app originally developed by the band OK Go.
+    This web app was created by Zsolt Varga as a coursework assignemnt for the Advanced Web
+    Technologies module at Edinburgh Napier University.
+  </div>
+
+  {%if not current_user.is_authenticated%}
+  <a href="/register"><h1 class="textAlignMiddle">Now create your account and get playing!</h1></a>
+  {% else %}
+  <a href="/play_random"><h1 class="textAlignMiddle">Now get playing!</h1></a>
+  {% endif %}
+
 {% endblock %}

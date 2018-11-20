@@ -10,16 +10,6 @@ import time
 
 db.create_all()
 
-
-@app.route('/')
-def home():
-    curr_user_leveling = {}
-    new_notifications = {}
-    if current_user.is_authenticated:
-        curr_user_leveling = user_level_info(current_user)
-        new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('home.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
-
 @app.route('/register')
 def register():
     if request.args:
@@ -82,11 +72,13 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route('/welcome')
-@login_required
+@app.route('/')
 def welcome():
-    curr_user_leveling = user_level_info(current_user)
-    new_notifications = get_unseen_notific(current_user.notifications)
+    curr_user_leveling = {}
+    new_notifications = {}
+    if current_user.is_authenticated:
+        curr_user_leveling = user_level_info(current_user)
+        new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('welcome.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/games')
@@ -331,6 +323,8 @@ def change_avatar():
 
 @app.route('/delete_account')
 def delete_account():
+    for game in current_user.games:
+        db.session.delete(game)
     db.session.delete(current_user)
     db.session.commit()
     return redirect(url_for('home'))

@@ -196,10 +196,16 @@ body{
   border-radius: 15px;
 }
 
+
 .rightContBubble{
   width:70%;
   padding: 5px;
   background-color: rgb(255, 155, 68);
+}
+
+.bubble{
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .notificationBubble{
@@ -559,6 +565,10 @@ input[type="submit"]:hover{
 
 .textAlignMiddle{
   text-align: center;
+}
+
+.textJustify{
+  text-align: justify;
 }
 
 .whiteOrange{
