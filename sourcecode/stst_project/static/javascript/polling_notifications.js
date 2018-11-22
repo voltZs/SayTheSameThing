@@ -11,7 +11,7 @@ if (numOfNotifications > 0) {
 
 updateNotificationsPanel();
 checkNotifications();
-setInterval(checkNotifications, 5000);
+setInterval(checkNotifications, 15000);
 
 function checkNotifications() {
   var passinData = {

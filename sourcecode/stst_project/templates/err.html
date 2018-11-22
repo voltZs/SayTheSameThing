@@ -1,0 +1,12 @@
+{% extends "withsidebar.html" %}
+
+{% block meta_title %}
+  {{error_code}} - Say The Same Thing
+{% endblock %}
+
+
+{% block page_content %}
+  <h1 class="textAlignMiddle">{{error_code}}</h1>
+  <h3 class="textAlignMiddle">{{error_msg}}</h3>
+  <h3 class="textAlignMiddle"><i class="fas fa-sad-cry fa-4x"></i></h3>
+{% endblock %}

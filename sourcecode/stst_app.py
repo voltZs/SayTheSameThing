@@ -95,10 +95,13 @@ def my_games():
             else:
                 current_games.append(create_game_dict(game))
 
-
+    deletemode = False
+    if session.get('deletemode'):
+        deletemode = True
+    session['deletemode'] = False
     curr_user_leveling = user_level_info(current_user)
     new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
+    return render_template('mygames.html',current_games=current_games, finished_games=finished_games, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications, deletemode=deletemode)
 
 @app.route('/buddies')
 @login_required
@@ -145,7 +148,7 @@ def user_me():
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('usersettings.html', user=user, user_leveling=user_leveling, curr_user_leveling=user_leveling, new_notifications=new_notifications)
 
-@app.route('/change_password', methods=['GET', 'POST'])
+@app.route('/user_settings/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
     if request.method == 'POST':
@@ -171,6 +174,22 @@ def change_password():
     new_notifications = get_unseen_notific(current_user.notifications)
     return render_template('changepassword.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
+@app.route('/user_settings/change_avatar', methods=["POST"])
+def change_avatar():
+    new_avatar = request.form['avatar']
+    current_user.avatar = new_avatar
+    db.session.add(current_user)
+    db.session.commit()
+    return redirect(url_for('user_me'))
+
+@app.route('/user_settings/delete_account')
+def delete_account():
+    for game in current_user.games:
+        db.session.delete(game)
+    db.session.delete(current_user)
+    db.session.commit()
+    return redirect(url_for('welcome'))
+
 @app.route('/user/<username>')
 @login_required
 def user_page(username):
@@ -184,9 +203,13 @@ def user_page(username):
     for game in user.games:
         if current_user in game.users:
             games.append(create_game_dict(game))
+    deletemode = False
+    if session.get('deletemode'):
+        deletemode = True
+    session['deletemode'] = False
     curr_user_leveling = user_level_info(current_user)
     new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('userpage.html', user=user, games=games, user_leveling=user_leveling, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
+    return render_template('userpage.html', user=user, games=games, user_leveling=user_leveling, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications, deletemode=deletemode)
 
 @app.route('/user/<username>/add_buddy')
 @login_required
@@ -204,7 +227,7 @@ def add_buddy(username):
             db.session.add(new_buddy)
             db.session.commit()
         else:
-            flash("This user is already your buddy")
+            return abort(404, "This user is already your buddy")
             return redirect('/user/'+username)
     else:
         return abort(404, "The user you are trying to add as a buddy was not found")
@@ -220,7 +243,7 @@ def remove_buddy(username):
             db.session.add(current_user)
             db.session.commit()
         else:
-            flash("This user is not in your buddies")
+            return abort(404, "This user is not in your buddies")
             return redirect('/user/'+username)
     else:
         return abort(404, "The user you are trying to remove from buddies was not found")
@@ -252,7 +275,7 @@ def start_game_with_user(username):
         db.session.commit()
 
         notification = Notification()
-        notification.link = "/play/" + str(new_game.id)
+        notification.link = "/game/" + str(new_game.id)
         notification.content = current_user.username + " started a new game with you."
         user.notifications.append(notification)
 
@@ -265,7 +288,7 @@ def start_game_with_user(username):
         return abort(404, 'The user you are trying to play with does not exist.')
 
 
-@app.route('/play/<game_id>')
+@app.route('/game/<game_id>')
 @login_required
 def play(game_id):
     game = Game.query.get(game_id)
@@ -304,51 +327,56 @@ def play(game_id):
                                     game_status=game_status,
                                     rounds=rounds)
         else:
-            return abort(404, 'You do not have access to this game.'), 404
+            return abort(403, 'You do not have access to this game.'), 403
     else:
         return abort(404, 'This game does not exist or has been deleted'), 404
 
-@app.route('/play/<game_id>/remove')
+@app.route('/game/<game_id>/remove')
 @login_required
 def delete_game(game_id):
     game = Game.query.get(game_id)
+    if not game:
+        return abort(404, "Game not found"), 404
     if not game in current_user.games:
-        abort(404, "Yu are not authorised to delete this game.")
+        abort(403, "You are not authorised to delete this game."), 403
     db.session.delete(game)
     db.session.commit()
     next = request.args.get('next')
+    session['deletemode'] = True
     if next:
         return redirect(next)
     return redirect(url_for('my_games'))
 
 
-@app.route('/submit_answer')
+@app.route('/game/<game_id>/submit_answer')
 @login_required
-def create_turn():
-    game = Game.query.get(request.args.get('game_id'))
-    user = User.query.get(request.args.get('user_id'))
+def create_turn(game_id):
+    game = Game.query.get(game_id)
     game_status = request.args.get('game_status')
     answer = request.args.get('answer')
-    turn = Turn(answer)
+
+    if answer:
+        turn = Turn(answer)
+    else:
+        return abort(404, 'No answer was supplied.')
 
     if game_status == 'STATUS_GO':
-        if game and user:
-            if user == current_user:
+        if game:
+            if game in current_user.games:
                 game.turns.append(turn)
-                user.turns.append(turn)
+                current_user.turns.append(turn)
                 db.session.add(game)
-                db.session.add(user)
+                db.session.add(current_user)
                 db.session.commit()
-                # REDIRECT MIGHT GET ELIMINATED AFTER MAKING THIS ASYNCHRONOUS
                 return redirect(url_for('play', game_id=game.id))
             else:
-                return abort(404, 'You can only submit your own turns'), 404
+                return abort(403, 'You can only submit turns in your own game'), 403
         else:
-            return abort(404, 'Game ID or User ID not found.'), 404
+            return abort(404, 'Game ID was not found.'), 404
     elif game_status == 'STATUS_WON':
-        return abort(404, "This game is finished"), 404
+        return abort(403, "This game is finished"), 403
     else:
-        return abort(404, "You cannot submit an answer when it's the opponent's turn"), 404
+        return abort(403, "You cannot submit an answer when it's the opponent's turn"), 403
 
 @app.route('/clear_notifications', methods=["POST"])
 def clear_notifications():
@@ -358,25 +386,9 @@ def clear_notifications():
     db.session.commit()
     return "Notifications cleared"
 
-@app.route('/change_avatar', methods=["POST"])
-def change_avatar():
-    new_avatar = request.form['avatar']
-    current_user.avatar = new_avatar
-    db.session.add(current_user)
-    db.session.commit()
-    return redirect(url_for('user_me'))
-
-@app.route('/delete_account')
-def delete_account():
-    for game in current_user.games:
-        db.session.delete(game)
-    db.session.delete(current_user)
-    db.session.commit()
-    return redirect(url_for('welcome'))
-
 ############################ POLLING ############################
 
-@app.route('/poll')
+@app.route('/poll_game')
 def poll_game():
     passed_in_turns = request.args.get("otherTurns")
     game_id = request.args.get("gameId")
@@ -401,6 +413,7 @@ def poll_waiting_users():
     # check if I am still waiting for a game if yes look for others who are too
     while True:
         db.session.commit()
+        print(current_user.waiting_for_a_game)
         if current_user.waiting_for_a_game==False:
             my_games = current_user.games
             return str(my_games[len(my_games)-1].id)
@@ -409,13 +422,13 @@ def poll_waiting_users():
                 new_game = Game()
                 new_game.users.append(current_user)
                 new_game.users.append(other_user)
-                other_user.waiting_for_a_game=False
                 current_user.waiting_for_a_game=False
-                db.session.add(other_user)
                 db.session.add(current_user)
                 db.session.add(new_game)
                 db.session.commit()
-                return str(new_game.id)
+                other_user.waiting_for_a_game=False
+                db.session.add(other_user)
+                db.session.commit()
         time.sleep(3)
         counter += 1
         if counter > 22:
@@ -438,12 +451,25 @@ def get_notifications():
 ################################# ERRORS ##################################
 
 @app.errorhandler(404)
-def page_not_found(error):
+def error_handling(error):
+    return render_error_page(error)
+
+@app.errorhandler(403)
+def error_handling(error):
+    return render_error_page(error)
+
+@app.errorhandler(500)
+def error_handling(error):
+    return render_error_page(error)
+
+
+def render_error_page(error):
     curr_user_leveling = {}
+    new_notifications = {}
     if current_user.is_authenticated:
         curr_user_leveling = user_level_info(current_user)
         new_notifications = get_unseen_notific(current_user.notifications)
-    return render_template('err404.html', error_msg=error, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications), 404
+    return render_template('err.html',error_code=error.code, error_msg=error.description, curr_user_leveling=curr_user_leveling, new_notifications=new_notifications), 404
 
 
 ####################   OTHER FUNCTIONS   ############################

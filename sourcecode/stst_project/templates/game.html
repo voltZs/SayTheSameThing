@@ -92,7 +92,7 @@ Play - Say The Same Thing
     </a>
 
     <div class="answerDiv compDark">
-      <form action="/submit_answer">
+      <form action="/game/{{game_id}}/submit_answer">
         <input type="text" name="answer" value=""
                 {% if game_status == 'STATUS_GO' %}
                 placeholder="Say The Same Thing"
@@ -104,8 +104,6 @@ Play - Say The Same Thing
                 disabled
                 {% endif %}
                 class="answerBubble" required>
-        <input type="hidden" name="game_id" value="{{game_id}}">
-        <input type="hidden" name="user_id" value="{{current_user.id}}">
         <input type="hidden" name="game_status" value="{{game_status}}">
       </form>
       <br>

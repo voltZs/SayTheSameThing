@@ -23,7 +23,7 @@ function pollWaitingUsers() {
       success: function(data) {
           if(data){
             gameId = parseInt(data);
-            window.location.replace('/play/'+ gameId.toString());
+            window.location.replace('/game/'+ gameId.toString());
           }else{
             pollWaitingUsers();
           }

@@ -14,14 +14,14 @@ function checkForChanges() {
   }
 
   $.ajax({
-      url:"/poll",
+      url:"/poll_game",
       data: passinData,
       timeout: 60000,
       success: function(data) {
           // If a change occured to database, refresh, if it just timed out, poll again
           retrievedNum = parseInt(data)
           if (otherUserTurns != retrievedNum){
-            window.location.replace('/play/'+ gameId.toString());
+            window.location.replace('/game/'+ gameId.toString());
           } else {
             checkForChanges();
           }
@@ -60,7 +60,7 @@ function checkForChanges() {
 //           // }
 //           //
 //           if (otherUserTurns != JSON.parse(data)){
-//             window.location.replace('/play/'+ gameId.toString());
+//             window.location.replace('/game/'+ gameId.toString());
 //           };
 //
 //        }

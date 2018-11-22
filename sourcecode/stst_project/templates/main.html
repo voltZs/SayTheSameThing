@@ -63,14 +63,16 @@
 
 
     <div class="mainContainer">
-      <div class="topSpace"></div>
+      <div class="topSpace">
       {% with msgs = get_flashed_messages() %}
         {% if msgs %}
-          <div class=flash_msg>
+          <div class="flash_msg compOrange floatingShadow">
             {{msgs[0]}}
           </div>
         {% endif %}
       {% endwith %}
+    </div>
+
 
       {% block main_content %}
       {% endblock %}

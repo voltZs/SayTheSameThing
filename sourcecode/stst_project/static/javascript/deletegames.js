@@ -6,3 +6,9 @@ editButton.addEventListener("click", function(event){
     dButton.classList.toggle("hidden");
   })
 })
+
+if(editButton.getAttribute('deletemode') == "True"){
+  deleteButtons.forEach(function(dButton){
+    dButton.classList.remove("hidden");
+  })
+}
