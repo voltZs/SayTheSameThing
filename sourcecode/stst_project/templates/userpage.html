@@ -9,9 +9,9 @@
   <style>
     @keyframes barGrow{
       0% {width: 0%}
-      100% {width: {{user_leveling.xp_to_level*100}}%}
+      100% {width: {{user_leveling['xp_to_level']*100}}%}
     }
-    #userBarFill{width: {{user_leveling.xp_to_level*100}}%;
+    #userBarFill{width: {{user_leveling['xp_to_level']*100}}%;
                 animation-name: barGrow;
                 animation-duration: 0.8s}
   </style>

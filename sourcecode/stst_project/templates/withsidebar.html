@@ -14,7 +14,7 @@
 {% if current_user.is_authenticated %}
   {% if curr_user_leveling %}
     <style>
-    #currentUserBarFill{ width: {{(curr_user_leveling.xp_to_level|float) *100}}%}
+    #currentUserBarFill{ width: {{(curr_user_leveling['xp_to_level']) *100}}%}
     </style>
   {% endif %}
 
@@ -24,7 +24,6 @@
         <div id="avatarBub" class="rightContItem" >
           <img src="{{url_for('static', filename= 'avatars/'+ current_user.avatar|string +'.png')}}" alt="" width="120" height="120">
         </div>
-        {{curr_user_leveling.xp_to_level|float}}
         <div class="userInfoCont" id="currentUserInfo">
           <div class="userNameHolder">
             {{current_user.username}}
