@@ -82,9 +82,9 @@ db.create_all()
 
 users = User.query.all()
 for user in users:
-    # user.waiting_for_a_game = False
-    # db.session.add(user)
-    # db.session.commit()
+    user.waiting_for_a_game = False
+    db.session.add(user)
+    db.session.commit()
     print(user.username)
     print(user.waiting_for_a_game)
     print("-----------")
