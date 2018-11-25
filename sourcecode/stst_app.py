@@ -175,6 +175,7 @@ def change_password():
     return render_template('changepassword.html', curr_user_leveling=curr_user_leveling, new_notifications=new_notifications)
 
 @app.route('/user_settings/change_avatar', methods=["POST"])
+@login_required
 def change_avatar():
     new_avatar = request.form['avatar']
     current_user.avatar = new_avatar
@@ -183,6 +184,7 @@ def change_avatar():
     return redirect(url_for('user_me'))
 
 @app.route('/user_settings/delete_account')
+@login_required
 def delete_account():
     for game in current_user.games:
         db.session.delete(game)
@@ -379,6 +381,7 @@ def create_turn(game_id):
         return abort(403, "You cannot submit an answer when it's the opponent's turn"), 403
 
 @app.route('/clear_notifications', methods=["POST"])
+@login_required
 def clear_notifications():
     for notification in current_user.notifications:
         notification.viewed=True
@@ -389,6 +392,7 @@ def clear_notifications():
 ############################ POLLING ############################
 
 @app.route('/poll_game')
+@login_required
 def poll_game():
     passed_in_turns = request.args.get("otherTurns")
     game_id = request.args.get("gameId")
@@ -406,6 +410,7 @@ def poll_game():
             return numOfTurns
 
 @app.route('/find_waiting_user')
+@login_required
 def poll_waiting_users():
     db.session.commit()
     users = User.query.filter_by(waiting_for_a_game=True)
@@ -435,12 +440,14 @@ def poll_waiting_users():
             return None
 
 @app.route('/check_notifications')
+@login_required
 def poll_notifications():
     passed_in_num = int(request.args.get("numOfNotifications"))
     new_notifications = get_unseen_notific(current_user.notifications)
     return str(len(new_notifications))
 
 @app.route('/get_notifications')
+@login_required
 def get_notifications():
     notifications = []
     for notification in current_user.notifications:
